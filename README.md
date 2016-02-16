@@ -10,15 +10,15 @@ This package can be installed using Composer by running:
 
     composer require eddturtle/direct-upload
 
-We then need to make sure we're loading Composer's autoloader.
+We then need to make sure we're using Composer's autoloader.
 
     require_once "vendor/autoload.php";
     
 ### Usage
 
-Once we have the package installed we can make our uploader object, like so:
+Once we have the package installed we can make our uploader object, like so (remember to replace the params with your own):
 
-    $uploader = new EddTurtle\DirectUpload\Signature(
+    $uploader = new \EddTurtle\DirectUpload\Signature(
         "YOUR_S3_KEY",
         "YOUR_S3_SECRET",
         "YOUR_S3_BUCKET",
@@ -32,6 +32,13 @@ Then, using the object we've just made, we can use it to generate the form's url
         <!-- Other Inputs Go Here -->
     </form>
     
+### Contributing
+    
+Contributions via pull requests are welcome. The project is built with the PSR-2 coding standard, if any code is submitted it should adhere to this and come with any applicable tests for code changed/added. Where possible also keep one pull request per feature.
+
+Running the tests is as easier as running:
+
+    vendor/bin/phpunit
     
 ### Licence
 
