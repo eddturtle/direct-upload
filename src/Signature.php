@@ -73,6 +73,15 @@ class Signature
         ];
     }
 
+    public function getFormInputsAsHtml()
+    {
+        $html = "";
+        foreach ($this->getFormInputs() as $name => $value) {
+            $html = '<input type="hidden" name="' . $name . '" value="' . $value . '">';
+        }
+        return $html;
+    }
+
     protected function generateScope()
     {
         $scope = [
