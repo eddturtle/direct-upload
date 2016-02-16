@@ -1,12 +1,15 @@
 {
     "name": "eddturtle/direct-upload",
-    "description": "",
+    "description": "Composer Package to Direct Upload to S3",
     "license": "MIT",
     "keywords": [
         "direct",
         "upload",
         "aws",
-        "s3"
+        "s3",
+        "php",
+        "amazon",
+        "signature"
     ],
     "authors": [
         {

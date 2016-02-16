@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/eddturtle/direct-upload.svg?branch=master)](https://travis-ci.org/eddturtle/direct-upload)
 
-This package is designed to build the necessary signature, policy and form inputs when sending files directly to Amazon's S3 service. This project was sprouted from [this blog post](https://www.designedbyaturtle.co.uk/2013/direct-upload-to-s3-with-a-little-help-from-jquery/) which might help explain how the code works and how to set it up. The blog post also has lots of useful comments, which might help you out if you're having problems.
+This package is designed to build the necessary signature (v4), policy and form inputs when sending files directly to Amazon's S3 service. This project was sprouted from [this blog post](https://www.designedbyaturtle.co.uk/2013/direct-upload-to-s3-with-a-little-help-from-jquery/) which might help explain how the code works and how to set it up. The blog post also has lots of useful comments, which might help you out if you're having problems.
 
 ### Install
 
@@ -16,7 +16,7 @@ We then need to make sure we're using Composer's autoloader.
     
 ### Usage
 
-Once we have the package installed we can make our uploader object, like so (remember to replace the params with your own):
+Once we have the package installed we can make our uploader object, like so: (remember to add your s3 details)
 
     $uploader = new \EddTurtle\DirectUpload\Signature(
         "YOUR_S3_KEY",
@@ -32,11 +32,13 @@ Then, using the object we've just made, we can use it to generate the form's url
         <!-- Other Inputs Go Here -->
     </form>
     
+We have an [example project](https://github.com/eddturtle/direct-upload-s3-signaturev4) setup to demonstrate.
+    
 ### Contributing
     
 Contributions via pull requests are welcome. The project is built with the PSR-2 coding standard, if any code is submitted it should adhere to this and come with any applicable tests for code changed/added. Where possible also keep one pull request per feature.
 
-Running the tests is as easier as running:
+Running the tests is as easy, just run:
 
     vendor/bin/phpunit
     

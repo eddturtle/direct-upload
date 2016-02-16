@@ -40,11 +40,17 @@ class Signature
         $this->options += $options;
     }
 
+    /**
+     * @return string
+     */
     public function getFormUrl()
     {
         return "//" . $this->bucket . "." . self::SERVICE . "-" . $this->region . ".amazonaws.com";
     }
 
+    /**
+     * @return null
+     */
     public function getSignature()
     {
         if (is_null($this->signature)) {
@@ -55,6 +61,9 @@ class Signature
         return $this->signature;
     }
 
+    /**
+     * @return array
+     */
     public function getFormInputs()
     {
         if (is_null($this->signature)) {
@@ -73,6 +82,9 @@ class Signature
         ];
     }
 
+    /**
+     * @return string
+     */
     public function getFormInputsAsHtml()
     {
         $html = "";
