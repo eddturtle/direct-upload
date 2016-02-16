@@ -1,0 +1,26 @@
+{
+    "name": "eddturtle/direct-upload",
+    "description": "",
+    "license": "MIT",
+    "keywords": [
+        "direct",
+        "upload",
+        "aws",
+        "s3"
+    ],
+    "authors": [
+        {
+            "name": "Edd Turtle",
+            "email": "edd@designedbyaturtle.co.uk"
+        }
+    ],
+    "require": {},
+    "require-dev": {
+        "phpunit/phpunit": "4.0.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "EddTurtle\\DirectUpload\\": "src"
+        }
+    }
+}
