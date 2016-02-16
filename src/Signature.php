@@ -2,6 +2,10 @@
 
 namespace EddTurtle\DirectUpload;
 
+/**
+ * Class Signature
+ * @package EddTurtle\DirectUpload
+ */
 class Signature
 {
 
@@ -29,6 +33,15 @@ class Signature
     private $base64Policy = null;
     private $signature = null;
 
+    /**
+     * Signature constructor.
+     *
+     * @param string $awsKey
+     * @param string $awsSecret
+     * @param string $bucketName
+     * @param string $regionName
+     * @param array  $options
+     */
     public function __construct($awsKey, $awsSecret, $bucketName, $regionName, $options = [])
     {
         $this->key = $awsKey;
@@ -41,7 +54,9 @@ class Signature
     }
 
     /**
-     * @return string
+     * Build the form url for sending files, this will include the bucket and the region name.
+     *
+     * @return string the s3 bucket's url.
      */
     public function getFormUrl()
     {
@@ -49,7 +64,9 @@ class Signature
     }
 
     /**
-     * @return null
+     * Get an AWS Signature V4 generated.
+     *
+     * @return string the signature.
      */
     public function getSignature()
     {
@@ -62,7 +79,9 @@ class Signature
     }
 
     /**
-     * @return array
+     * Generate the necessary inputs to go within the form.
+     *
+     * @return array of the form inputs.
      */
     public function getFormInputs()
     {
@@ -83,17 +102,25 @@ class Signature
     }
 
     /**
-     * @return string
+     * Based on getFormInputs(), this will build up the html to go within the form.
+     *
+     * @return string html of hidden form inputs.
      */
     public function getFormInputsAsHtml()
     {
         $html = "";
         foreach ($this->getFormInputs() as $name => $value) {
-            $html = '<input type="hidden" name="' . $name . '" value="' . $value . '">';
+            $html .= '<input type="hidden" name="' . $name . '" value="' . $value . '">';
         }
         return $html;
     }
 
+
+    // Where the magic begins ;)
+
+    /**
+     * Step 1: Generate the Scope
+     */
     protected function generateScope()
     {
         $scope = [
@@ -106,6 +133,9 @@ class Signature
         $this->credentials = implode('/', $scope);
     }
 
+    /**
+     * Step 2: Generate a Base64 Policy
+     */
     protected function generatePolicy()
     {
         $policy = [
@@ -125,6 +155,9 @@ class Signature
         $this->base64Policy = base64_encode(json_encode($policy));
     }
 
+    /**
+     * Step 3: Generate and sign the Signature (v4)
+     */
     protected function generateSignature()
     {
         $dateKey = hash_hmac('sha256', $this->getShortDateFormat(), 'AWS4' . $this->secret, true);
@@ -136,7 +169,7 @@ class Signature
     }
 
 
-    // Helper funcs.
+    // Helper functions
 
     private function populateTime()
     {
