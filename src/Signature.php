@@ -47,9 +47,11 @@ class Signature
 
     public function getSignature()
     {
-        $this->generateScope();
-        $this->generatePolicy();
-        $this->generateSignature();
+        if (is_null($this->signature)) {
+            $this->generateScope();
+            $this->generatePolicy();
+            $this->generateSignature();
+        }
         return $this->signature;
     }
 
@@ -115,19 +117,22 @@ class Signature
 
     // Helper funcs.
 
-    private function getShortDateFormat()
+    private function populateTime()
     {
         if (is_null($this->time)) {
             $this->time = time();
         }
+    }
+
+    private function getShortDateFormat()
+    {
+        $this->populateTime();
         return gmdate("Ymd", $this->time);
     }
 
     private function getFullDateFormat()
     {
-        if (is_null($this->time)) {
-            $this->time = time();
-        }
+        $this->populateTime();
         return gmdate("Ymd\THis\Z", $this->time);
     }
 
