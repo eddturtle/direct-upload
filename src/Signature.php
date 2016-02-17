@@ -4,6 +4,7 @@ namespace EddTurtle\DirectUpload;
 
 /**
  * Class Signature
+ *
  * @package EddTurtle\DirectUpload
  */
 class Signature
@@ -13,12 +14,23 @@ class Signature
     CONST SERVICE = "s3";
     CONST REQUEST_TYPE = "aws4_request";
 
+    /**
+     * Default options, these can be overwritten within the constructor.
+     *
+     * @var array
+     */
     protected $options = [
+
+        // The amount of time the request is valid for.
+        // 86400 = 1 Day (just to be safe)
         'expires' => '86400',
 
+        // If the upload is a success, the http code to get back.
         'success_status' => '201',
 
-        'acl' => 'private',
+        // If the file should be private/public-read/public-write. More info: http://amzn.to/1SSOgwO
+        'acl' => 'private'
+
     ];
 
     private $key;
@@ -36,21 +48,44 @@ class Signature
     /**
      * Signature constructor.
      *
-     * @param string $awsKey
-     * @param string $awsSecret
-     * @param string $bucketName
-     * @param string $regionName
-     * @param array  $options
+     * @param string $key     the AWS API Key to use.
+     * @param string $secret  the AWS API Secret to use.
+     * @param string $bucket  the bucket to upload the file into.
+     * @param string $region  the s3 region this bucket is within. More info: http://amzn.to/1FtPG6r
+     * @param array  $options any additional options, like acl and success status.
      */
-    public function __construct($awsKey, $awsSecret, $bucketName, $regionName, $options = [])
+    public function __construct($key, $secret, $bucket, $region, $options = [])
     {
-        $this->key = $awsKey;
-        $this->secret = $awsSecret;
+        $this->setAwsCredentials($key, $secret);
 
-        $this->bucket = $bucketName;
-        $this->region = $regionName;
+        $this->bucket = $bucket;
+        $this->region = new Region($region);
 
         $this->options += $options;
+        $this->options['acl'] = new Acl($this->options['acl']);
+    }
+
+    /**
+     * Set the AWS Credentials
+     *
+     * @param string $key    the AWS API Key to use.
+     * @param string $secret the AWS API Secret to use.
+     */
+    public function setAwsCredentials($key, $secret)
+    {
+        // Key
+        if (!empty($key)) {
+            $this->key = $key;
+        } else {
+            throw new \InvalidArgumentException("Invalid AWS Key");
+        }
+
+        // Secret
+        if (!empty($secret)) {
+            $this->secret = $secret;
+        } else {
+            throw new \InvalidArgumentException("Invalid AWS Secret");
+        }
     }
 
     /**
@@ -60,7 +95,7 @@ class Signature
      */
     public function getFormUrl()
     {
-        return "//" . $this->bucket . "." . self::SERVICE . "-" . $this->region . ".amazonaws.com";
+        return "//" . $this->bucket . "." . self::SERVICE . "-" . $this->region->getName() . ".amazonaws.com";
     }
 
     /**
@@ -79,18 +114,22 @@ class Signature
     }
 
     /**
-     * Generate the necessary inputs to go within the form.
+     * Generate the necessary hidden inputs to go within the form.
+     *
+     * @param bool $addKey whether to add the 'key' input (filename), defaults to yes.
      *
      * @return array of the form inputs.
      */
-    public function getFormInputs()
+    public function getFormInputs($addKey = true)
     {
+        // Only generate the signature once
         if (is_null($this->signature)) {
             $this->getSignature();
         }
-        return [
+
+        $inputs = [
             'Content-Type' => '',
-            'acl' => $this->options['acl'],
+            'acl' => $this->options['acl']->getName(),
             'success_action_status' => $this->options['success_status'],
             'policy' => $this->base64Policy,
             'X-amz-credential' => $this->credentials,
@@ -99,6 +138,14 @@ class Signature
             'X-amz-expires' => $this->options['expires'],
             'X-amz-signature' => $this->signature
         ];
+
+        if ($addKey) {
+            // Note: The Key (filename) will need to be populated with JS on upload
+            // if anything other than the filename is wanted.
+            $inputs['key'] = '${filename}';
+        }
+
+        return $inputs;
     }
 
     /**
@@ -110,7 +157,7 @@ class Signature
     {
         $html = "";
         foreach ($this->getFormInputs() as $name => $value) {
-            $html .= '<input type="hidden" name="' . $name . '" value="' . $value . '">';
+            $html .= '<input type="hidden" name="' . $name . '" value="' . $value . '" />' . PHP_EOL;
         }
         return $html;
     }
@@ -126,7 +173,7 @@ class Signature
         $scope = [
             $this->key,
             $this->getShortDateFormat(),
-            $this->region,
+            $this->region->getName(),
             self::SERVICE,
             self::REQUEST_TYPE
         ];
@@ -142,7 +189,7 @@ class Signature
             'expiration' => gmdate('Y-m-d\TG:i:s\Z', strtotime('+6 hours')),
             'conditions' => [
                 ['bucket' => $this->bucket],
-                ['acl' => $this->options['acl']],
+                ['acl' => $this->options['acl']->getName()],
                 ['starts-with', '$key', ''],
                 ['starts-with', '$Content-Type', ''],
                 ['success_action_status' => $this->options['success_status']],
@@ -161,7 +208,7 @@ class Signature
     protected function generateSignature()
     {
         $dateKey = hash_hmac('sha256', $this->getShortDateFormat(), 'AWS4' . $this->secret, true);
-        $dateRegionKey = hash_hmac('sha256', $this->region, $dateKey, true);
+        $dateRegionKey = hash_hmac('sha256', $this->region->getName(), $dateKey, true);
         $dateRegionServiceKey = hash_hmac('sha256', self::SERVICE, $dateRegionKey, true);
         $signingKey = hash_hmac('sha256', self::REQUEST_TYPE, $dateRegionServiceKey, true);
 
