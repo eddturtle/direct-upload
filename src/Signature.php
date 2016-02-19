@@ -5,6 +5,8 @@ namespace EddTurtle\DirectUpload;
 /**
  * Class Signature
  *
+ * Build an AWS Signature, ready for direct upload.
+ *
  * @package EddTurtle\DirectUpload
  */
 class Signature
@@ -25,11 +27,16 @@ class Signature
         // 86400 = 1 Day (just to be safe)
         'expires' => '86400',
 
-        // If the upload is a success, the http code to get back.
+        // If the upload is a success, the http code we get back.
         'success_status' => '201',
 
-        // If the file should be private/public-read/public-write. More info: http://amzn.to/1SSOgwO
-        'acl' => 'private'
+        // If the file should be private/public-read/public-write.
+        // This is file specific, not bucket. More info: http://amzn.to/1SSOgwO
+        'acl' => 'private',
+
+        // The file's name, can be set with JS by changing the input[name="key"]
+        // ${filename} will just mean the filename of the file being uploaded.
+        'default_filename' => '${filename}'
 
     ];
 
@@ -57,12 +64,12 @@ class Signature
     public function __construct($key, $secret, $bucket, $region, $options = [])
     {
         $this->setAwsCredentials($key, $secret);
+        $this->populateTime();
 
         $this->bucket = $bucket;
         $this->region = new Region($region);
 
-        $this->options += $options;
-        $this->options['acl'] = new Acl($this->options['acl']);
+        $this->setOptions($options);
     }
 
     /**
@@ -96,6 +103,27 @@ class Signature
     public function getFormUrl()
     {
         return "//" . $this->bucket . "." . self::SERVICE . "-" . $this->region->getName() . ".amazonaws.com";
+    }
+
+    /**
+     * Get all options.
+     *
+     * @return array
+     */
+    public function getOptions()
+    {
+        return $this->options;
+    }
+
+    /**
+     * Set/overwrite any default options.
+     *
+     * @param $options
+     */
+    public function setOptions($options)
+    {
+        $this->options = $options + $this->options;
+        $this->options['acl'] = new Acl($this->options['acl']);
     }
 
     /**
@@ -142,7 +170,7 @@ class Signature
         if ($addKey) {
             // Note: The Key (filename) will need to be populated with JS on upload
             // if anything other than the filename is wanted.
-            $inputs['key'] = '${filename}';
+            $inputs['key'] = $this->options['default_filename'];
         }
 
         return $inputs;
@@ -186,7 +214,7 @@ class Signature
     protected function generatePolicy()
     {
         $policy = [
-            'expiration' => gmdate('Y-m-d\TG:i:s\Z', strtotime('+6 hours')),
+            'expiration' => $this->getExpirationDate(),
             'conditions' => [
                 ['bucket' => $this->bucket],
                 ['acl' => $this->options['acl']->getName()],
@@ -207,16 +235,30 @@ class Signature
      */
     protected function generateSignature()
     {
-        $dateKey = hash_hmac('sha256', $this->getShortDateFormat(), 'AWS4' . $this->secret, true);
-        $dateRegionKey = hash_hmac('sha256', $this->region->getName(), $dateKey, true);
-        $dateRegionServiceKey = hash_hmac('sha256', self::SERVICE, $dateRegionKey, true);
-        $signingKey = hash_hmac('sha256', self::REQUEST_TYPE, $dateRegionServiceKey, true);
+        $signatureData = [
+            $this->getShortDateFormat(),
+            $this->region->getName(),
+            self::SERVICE,
+            self::REQUEST_TYPE
+        ];
 
-        $this->signature = hash_hmac('sha256', $this->base64Policy, $signingKey);
+        // Iterates over the data, hashing it each time.
+        $signingKey = 'AWS4' . $this->secret;
+        foreach ($signatureData as $data) {
+            $signingKey = $this->keyHash($data, $signingKey);
+        }
+
+        // Finally, use the signing key to hash the policy.
+        $this->signature = $this->keyHash($this->base64Policy, $signingKey, false);
     }
 
 
     // Helper functions
+
+    private function keyHash($date, $key, $raw = true)
+    {
+        return hash_hmac('sha256', $date, $key, $raw);
+    }
 
     private function populateTime()
     {
@@ -227,14 +269,18 @@ class Signature
 
     private function getShortDateFormat()
     {
-        $this->populateTime();
         return gmdate("Ymd", $this->time);
     }
 
     private function getFullDateFormat()
     {
-        $this->populateTime();
         return gmdate("Ymd\THis\Z", $this->time);
     }
+
+    private function getExpirationDate()
+    {
+        return gmdate('Y-m-d\TG:i:s\Z', strtotime('+6 hours', $this->time));
+    }
+
 
 }
