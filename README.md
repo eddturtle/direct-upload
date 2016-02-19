@@ -1,6 +1,9 @@
 # Direct Upload to S3 (using PHP)
 
 [![Build Status](https://travis-ci.org/eddturtle/direct-upload.svg?branch=master)](https://travis-ci.org/eddturtle/direct-upload)
+[![Latest Stable Version](https://poser.pugx.org/eddturtle/direct-upload/v/stable)](https://packagist.org/packages/eddturtle/direct-upload)
+[![Total Downloads](https://poser.pugx.org/eddturtle/direct-upload/downloads)](https://packagist.org/packages/eddturtle/direct-upload)
+[![License](https://poser.pugx.org/eddturtle/direct-upload/license)](https://packagist.org/packages/eddturtle/direct-upload)
 
 This package is designed to build the necessary signature (v4), policy and form inputs when sending files directly to Amazon's S3 service. This project was sprouted from [this blog post](https://www.designedbyaturtle.co.uk/2013/direct-upload-to-s3-with-a-little-help-from-jquery/) which might help explain how the code works and how to set it up. The blog post also has lots of useful comments, which might help you out if you're having problems.
 
