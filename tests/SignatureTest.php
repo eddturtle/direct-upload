@@ -30,6 +30,12 @@ class SignatureTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("//" . $testBucket . ".s3-" . $this->region . ".amazonaws.com", $url);
     }
 
+    public function testBuildUrlForUsEast()
+    {
+        $url = (new Signature('key', 'secret', 'bucket', 'us-east-1'))->getFormUrl();
+        $this->assertEquals("//bucket.s3.amazonaws.com", $url);
+    }
+
     public function testGetOptions()
     {
         $object = new Signature('key', 'secret', 'test', $this->region);

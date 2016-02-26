@@ -102,7 +102,16 @@ class Signature
      */
     public function getFormUrl()
     {
-        return "//" . $this->bucket . "." . self::SERVICE . "-" . $this->region->getName() . ".amazonaws.com";
+        $region = $this->region->getName();
+
+        // Only the us-east-1 region is exempt from needing the region in the url.
+        if ($region !== "us-east-1") {
+            $middle = "-" . $region;
+        } else {
+            $middle = "";
+        }
+
+        return "//" . $this->bucket . "." . self::SERVICE . $middle . ".amazonaws.com";
     }
 
     /**
