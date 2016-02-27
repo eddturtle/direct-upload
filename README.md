@@ -62,22 +62,30 @@ When uploading a file to S3 it's important that the bucket has a CORS configurat
 
 Options can be passed into the Signature class as a fifth parameter, below is a list of possible options which can be overwritten.
 
-| Option           | Default     | Description       |
-| ---------------- | ----------- |-------------     |
+| Option           | Default     | Description  |
+| ---------------- | ----------- |------------- |
 | expires          | 86400       | How long a request remains active. Defaults to a day. |
 | success_status   | 201         | The http response code from the server on success. Should be within the 200's |
 | acl              | private     | If the uploaded file is private (requires authentication) or is public, for a full list of options visit http://amzn.to/1SSOgwO |
 | default_filename | ${filename} | the name the file will have on s3, ${filename} will translate to the file's current name. |
     
-### Other Methods
+### Available Signature Methods
 
-
+| Method                | Description  |
+| --------------------- | ------------ |
+| setAwsCredentials()   | Allows you to change your AWS credentials after instantiating. |
+| getFormUrl()          | Gets the url to go into your form's action attribute (will work on http and https). |
+| getOptions()          | Gets all the options which are currently set, which if unchanged would be the default options. |
+| setOptions()          | Change any options after the signature has been instantiated. |
+| getSignature()        | Get the AWS Signature (v4), won't be needed if you're using getFormInputs() or getFormInputsAsHtml(). |
+| getFormInputs()       | Returns an array of all the inputs you'll need to submit in your form. This has an option parameter if the input[type="key] is wanted. |
+| getFormInputsAsHtml() | Uses getFormInputs() to build the required html to go into your form. |
 
 ### Contributing
     
 Contributions via pull requests are welcome. The project is built with the [PSR-2 coding standard](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md), if any code is submitted it should adhere to this and come with any applicable tests for code changed/added. Where possible also keep one pull request per feature.
 
-Running the tests is as easy, just run:
+Running the tests is as easy as running:
 
     vendor/bin/phpunit
     
