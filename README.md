@@ -58,9 +58,24 @@ When uploading a file to S3 it's important that the bucket has a CORS configurat
         </CORSRule>
     </CORSConfiguration>
     
+### Options
+
+Options can be passed into the Signature class as a fifth parameter, below is a list of possible options which can be overwritten.
+
+| Option           | Default     | Description       |
+| ---------------- | ----------- |-------------     |
+| expires          | 86400       | How long a request remains active. Defaults to a day. |
+| success_status   | 201         | The http response code from the server on success. Should be within the 200's |
+| acl              | private     | If the uploaded file is private (requires authentication) or is public, for a full list of options visit http://amzn.to/1SSOgwO |
+| default_filename | ${filename} | the name the file will have on s3, ${filename} will translate to the file's current name. |
+    
+### Other Methods
+
+
+
 ### Contributing
     
-Contributions via pull requests are welcome. The project is built with the PSR-2 coding standard, if any code is submitted it should adhere to this and come with any applicable tests for code changed/added. Where possible also keep one pull request per feature.
+Contributions via pull requests are welcome. The project is built with the [PSR-2 coding standard](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md), if any code is submitted it should adhere to this and come with any applicable tests for code changed/added. Where possible also keep one pull request per feature.
 
 Running the tests is as easy, just run:
 
