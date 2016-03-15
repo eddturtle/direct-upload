@@ -40,11 +40,12 @@ class SignatureTest extends PHPUnit_Framework_TestCase
     {
         $object = new Signature('key', 'secret', 'test', $this->region);
         $options = $object->getOptions();
-        $this->assertTrue(count($options) === 4);
+        $this->assertTrue(count($options) === 5);
         $this->assertArrayHasKey('expires', $options);
         $this->assertArrayHasKey('success_status', $options);
         $this->assertArrayHasKey('acl', $options);
         $this->assertArrayHasKey('default_filename', $options);
+        $this->assertArrayHasKey('max_file_size', $options);
     }
 
     public function testGetSignature()

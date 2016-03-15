@@ -36,8 +36,11 @@ class Signature
 
         // The file's name, can be set with JS by changing the input[name="key"]
         // ${filename} will just mean the filename of the file being uploaded.
-        'default_filename' => '${filename}'
+        'default_filename' => '${filename}',
 
+        // The maximum file size of an upload, specified in MB.
+        'max_file_size' => '500'
+        
     ];
 
     private $key;
@@ -222,6 +225,7 @@ class Signature
      */
     protected function generatePolicy()
     {
+        $maxSize = $this->mbToBytes($this->options['max_file_size']);
         $policy = [
             'expiration' => $this->getExpirationDate(),
             'conditions' => [
@@ -229,6 +233,7 @@ class Signature
                 ['acl' => $this->options['acl']->getName()],
                 ['starts-with', '$key', ''],
                 ['starts-with', '$Content-Type', ''],
+                ['content-length-range', 0, $maxSize],
                 ['success_action_status' => $this->options['success_status']],
                 ['x-amz-credential' => $this->credentials],
                 ['x-amz-algorithm' => self::ALGORITHM],
@@ -276,6 +281,17 @@ class Signature
         }
     }
 
+    private function mbToBytes($mb)
+    {
+        if (is_numeric($mb)) {
+            return $mb * pow(1024, 2);
+        }
+        return 0;
+    }
+
+
+    // Dates
+
     private function getShortDateFormat()
     {
         return gmdate("Ymd", $this->time);
@@ -288,6 +304,7 @@ class Signature
 
     private function getExpirationDate()
     {
+        // Note: using \DateTime::ISO8601 doesn't work :(
         return gmdate('Y-m-d\TG:i:s\Z', strtotime('+6 hours', $this->time));
     }
 
