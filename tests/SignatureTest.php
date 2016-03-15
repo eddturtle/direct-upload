@@ -40,8 +40,7 @@ class SignatureTest extends PHPUnit_Framework_TestCase
     {
         $object = new Signature('key', 'secret', 'test', $this->region);
         $options = $object->getOptions();
-        $this->assertTrue(count($options) === 5);
-        $this->assertArrayHasKey('expires', $options);
+        $this->assertTrue(count($options) === 4);
         $this->assertArrayHasKey('success_status', $options);
         $this->assertArrayHasKey('acl', $options);
         $this->assertArrayHasKey('default_filename', $options);
@@ -74,7 +73,6 @@ class SignatureTest extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('X-amz-credential', $inputs);
         $this->assertArrayHasKey('X-amz-algorithm', $inputs);
         $this->assertArrayHasKey('X-amz-date', $inputs);
-        $this->assertArrayHasKey('X-amz-expires', $inputs);
         $this->assertArrayHasKey('X-amz-signature', $inputs);
 
         // Check Values

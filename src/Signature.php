@@ -22,11 +22,7 @@ class Signature
      * @var array
      */
     protected $options = [
-
-        // The amount of time the request is valid for.
-        // 86400 = 1 Day (just to be safe)
-        'expires' => '86400',
-
+        
         // If the upload is a success, the http code we get back.
         'success_status' => '201',
 
@@ -175,7 +171,6 @@ class Signature
             'X-amz-credential' => $this->credentials,
             'X-amz-algorithm' => self::ALGORITHM,
             'X-amz-date' => $this->getFullDateFormat(),
-            'X-amz-expires' => $this->options['expires'],
             'X-amz-signature' => $this->signature
         ];
 
@@ -237,8 +232,7 @@ class Signature
                 ['success_action_status' => $this->options['success_status']],
                 ['x-amz-credential' => $this->credentials],
                 ['x-amz-algorithm' => self::ALGORITHM],
-                ['x-amz-date' => $this->getFullDateFormat()],
-                ['x-amz-expires' => $this->options['expires']],
+                ['x-amz-date' => $this->getFullDateFormat()]
             ]
         ];
         $this->base64Policy = base64_encode(json_encode($policy));
