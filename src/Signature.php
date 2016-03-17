@@ -1,6 +1,6 @@
 <?php
 
-namespace EddTurtle\DirectUpload;
+namespace DirectUpload;
 
 /**
  * Class Signature
