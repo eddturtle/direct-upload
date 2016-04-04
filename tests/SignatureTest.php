@@ -1,6 +1,6 @@
 <?php
 
-use EddTurtle\DirectUpload\Signature;
+use DirectUpload\Signature;
 
 class SignatureTest extends PHPUnit_Framework_TestCase
 {

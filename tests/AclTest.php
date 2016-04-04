@@ -1,7 +1,7 @@
 <?php
 
-use EddTurtle\DirectUpload\Acl;
-use EddTurtle\DirectUpload\InvalidAclException;
+use DirectUpload\Acl;
+use DirectUpload\InvalidAclException;
 
 class AclTest extends PHPUnit_Framework_TestCase
 {

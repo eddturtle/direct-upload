@@ -1,6 +1,6 @@
 <?php
 
-namespace EddTurtle\DirectUpload;
+namespace DirectUpload;
 
 /**
  * Class Signature
@@ -34,7 +34,7 @@ class Signature
         // ${filename} will just mean the filename of the file being uploaded.
         'default_filename' => '${filename}',
 
-        // The maximum file size of an upload, specified in MB.
+        // The maximum file size of an upload in MB.
         'max_file_size' => '500'
         
     ];
@@ -60,7 +60,7 @@ class Signature
      * @param string $region  the s3 region this bucket is within. More info: http://amzn.to/1FtPG6r
      * @param array  $options any additional options, like acl and success status.
      */
-    public function __construct($key, $secret, $bucket, $region, $options = [])
+    public function __construct($key, $secret, $bucket, $region = "us-east-1", $options = [])
     {
         $this->setAwsCredentials($key, $secret);
         $this->populateTime();

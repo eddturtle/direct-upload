@@ -1,7 +1,7 @@
 <?php
 
-use EddTurtle\DirectUpload\InvalidRegionException;
-use EddTurtle\DirectUpload\Region;
+use DirectUpload\InvalidRegionException;
+use DirectUpload\Region;
 
 class RegionTest extends PHPUnit_Framework_TestCase
 {
