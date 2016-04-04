@@ -1,6 +1,6 @@
 <?php
 
-namespace DirectUpload;
+namespace EddTurtle\DirectUpload;
 
 class InvalidRegionException extends \Exception
 {

@@ -1,8 +1,10 @@
 <?php
 
-use DirectUpload\Signature;
+namespace EddTurtle\DirectUpload\Tests;
 
-class SignatureTest extends PHPUnit_Framework_TestCase
+use EddTurtle\DirectUpload\Signature;
+
+class SignatureTest extends \PHPUnit_Framework_TestCase
 {
 
     public $region = "eu-west-1";
@@ -17,8 +19,8 @@ class SignatureTest extends PHPUnit_Framework_TestCase
     {
         try {
             new Signature('', '', '', $this->region);
-        } catch (Exception $e) {
-            $this->assertTrue($e instanceof InvalidArgumentException);
+        } catch (\Exception $e) {
+            $this->assertTrue($e instanceof \InvalidArgumentException);
         }
     }
 
@@ -98,8 +100,8 @@ class SignatureTest extends PHPUnit_Framework_TestCase
                 'expires' => PHP_INT_MAX
             ]);
             $object->getFormInputs(); // Forces the signature to be built
-        } catch (Exception $e) {
-            $this->assertTrue($e instanceof InvalidArgumentException);
+        } catch (\Exception $e) {
+            $this->assertTrue($e instanceof \InvalidArgumentException);
         }
     }
 

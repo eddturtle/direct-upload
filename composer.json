@@ -14,7 +14,8 @@
     "authors": [
         {
             "name": "Edd Turtle",
-            "email": "edd@designedbyaturtle.co.uk"
+            "email": "edd@designedbyaturtle.co.uk",
+            "homepage": "https://www.designedbyaturtle.co.uk"
         }
     ],
     "require": {
@@ -25,7 +26,12 @@
     },
     "autoload": {
         "psr-4": {
-            "DirectUpload\\": "src"
+            "EddTurtle\\DirectUpload\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Eddturtle\\DirectUpload\\Tests\\": "tests/"
         }
     }
 }

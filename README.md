@@ -21,7 +21,7 @@ We then need to make sure we're using Composer's autoloader.
 
 Once we have the package installed we can make our uploader object, like so: (remember to add your s3 details)
 
-    $uploader = new \DirectUpload\Signature(
+    $uploader = new \EddTurtle\DirectUpload\Signature(
         "YOUR_S3_KEY",
         "YOUR_S3_SECRET",
         "YOUR_S3_BUCKET",
@@ -73,7 +73,7 @@ Options can be passed into the Signature class as a fifth parameter, below is a 
 
 For example:
 
-    $uploader = new \DirectUpload\Signature("", "", "", "eu-west-1", [
+    $uploader = new \EddTurtle\DirectUpload\Signature("", "", "", "eu-west-1", [
         'acl' => 'public-read',
         'max_file_size' => 10
     ]);

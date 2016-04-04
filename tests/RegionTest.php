@@ -1,9 +1,11 @@
 <?php
 
-use DirectUpload\InvalidRegionException;
-use DirectUpload\Region;
+namespace EddTurtle\DirectUpload\Tests;
 
-class RegionTest extends PHPUnit_Framework_TestCase
+use EddTurtle\DirectUpload\InvalidRegionException;
+use EddTurtle\DirectUpload\Region;
+
+class RegionTest extends \PHPUnit_Framework_TestCase
 {
 
     public function testValid()
@@ -17,7 +19,7 @@ class RegionTest extends PHPUnit_Framework_TestCase
     {
         try {
             new Region('invalid region');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue($e instanceof InvalidRegionException);
         }
     }
