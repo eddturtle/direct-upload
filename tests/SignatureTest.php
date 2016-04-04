@@ -40,11 +40,12 @@ class SignatureTest extends PHPUnit_Framework_TestCase
     {
         $object = new Signature('key', 'secret', 'test', $this->region);
         $options = $object->getOptions();
-        $this->assertTrue(count($options) === 4);
+        $this->assertTrue(count($options) === 5);
         $this->assertArrayHasKey('success_status', $options);
         $this->assertArrayHasKey('acl', $options);
         $this->assertArrayHasKey('default_filename', $options);
         $this->assertArrayHasKey('max_file_size', $options);
+        $this->assertArrayHasKey('expires', $options);
     }
 
     public function testGetSignature()
@@ -80,6 +81,25 @@ class SignatureTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('200', $inputs['success_action_status']);
         $this->assertEquals(gmdate("Ymd\THis\Z"), $inputs['X-amz-date']);
         $this->assertEquals(Signature::ALGORITHM, $inputs['X-amz-algorithm']);
+    }
+
+    public function testInvalidExpiryDate()
+    {
+        // Test Successful Build
+        $object = new Signature('key', 'secret', 'testbucket', $this->region, [
+            'expires' => '+6 hours'
+        ]);
+        $object->getFormInputs(); // Forces the signature to be built
+
+        // Test Exception
+        try {
+            $object = new Signature('key', 'secret', 'testbucket', $this->region, [
+                'expires' => PHP_INT_MAX
+            ]);
+            $object->getFormInputs(); // Forces the signature to be built
+        } catch (Exception $e) {
+            $this->assertTrue($e instanceof InvalidArgumentException);
+        }
     }
 
 }

@@ -35,7 +35,11 @@ class Signature
         'default_filename' => '${filename}',
 
         // The maximum file size of an upload in MB.
-        'max_file_size' => '500'
+        'max_file_size' => '500',
+
+        // Request expiration time, specified in relative time format or in seconds.
+        // min: 1 ("+1 second"), max: 604800 ("+7 days")
+        'expires' => '+6 hours'
         
     ];
 
@@ -299,7 +303,15 @@ class Signature
     private function getExpirationDate()
     {
         // Note: using \DateTime::ISO8601 doesn't work :(
-        return gmdate('Y-m-d\TG:i:s\Z', strtotime('+6 hours', $this->time));
+
+        $exp = strtotime($this->options['expires'], $this->time);
+        $diff = $exp - $this->time;
+
+        if (!($diff >= 1 && $diff <= 604800)) {
+            throw new \InvalidArgumentException("Expiry must be between 1 and 604800");
+        }
+
+        return gmdate('Y-m-d\TG:i:s\Z', $exp);
     }
 
 
