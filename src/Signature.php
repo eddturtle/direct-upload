@@ -39,7 +39,11 @@ class Signature
 
         // Request expiration time, specified in relative time format or in seconds.
         // min: 1 ("+1 second"), max: 604800 ("+7 days")
-        'expires' => '+6 hours'
+        'expires' => '+6 hours',
+
+        // Validation prefix for the filename.
+        // Server must check the filename to be started with this prefix.
+        'valid_prefix' => '',
         
     ];
 
@@ -230,7 +234,7 @@ class Signature
             'conditions' => [
                 ['bucket' => $this->bucket],
                 ['acl' => $this->options['acl']->getName()],
-                ['starts-with', '$key', ''],
+                ['starts-with', '$key', $this->options['valid_prefix']],
                 ['starts-with', '$Content-Type', ''],
                 ['content-length-range', 0, $maxSize],
                 ['success_action_status' => $this->options['success_status']],

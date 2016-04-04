@@ -69,6 +69,7 @@ Options can be passed into the Signature class as a fifth parameter, below is a 
 | default_filename | ${filename} | The name the file will have on s3, ${filename} will translate to the file's current name. |
 | max_file_size    | 500         | The maximum file size of an upload, specified in MB. |
 | expires          | +6 hours    | The time the signature will invalidate, specified as value passed into strtotime(). Min: 1 ("+1 second"), max: 604800 ("+7 days"). |
+| valid_prefix     |             | Assures that all upload keys (file names) start with the following string. |
 
 For example:
 
