@@ -5,7 +5,8 @@ namespace EddTurtle\DirectUpload;
 /**
  * Class Signature
  *
- * Build an AWS Signature, ready for direct upload.
+ * Build an AWS Signature, ready for direct upload. This will support AWS's signature v4 so should be
+ * accepted by all regions.
  *
  * @package EddTurtle\DirectUpload
  */
@@ -23,7 +24,7 @@ class Signature
      */
     protected $options = [
         
-        // If the upload is a success, the http code we get back.
+        // If the upload is a success, the http code we get back from S3.
         'success_status' => '201',
 
         // If the file should be private/public-read/public-write.
@@ -31,10 +32,10 @@ class Signature
         'acl' => 'private',
 
         // The file's name, can be set with JS by changing the input[name="key"]
-        // ${filename} will just mean the filename of the file being uploaded.
+        // ${filename} will just mean the original filename of the file being uploaded.
         'default_filename' => '${filename}',
 
-        // The maximum file size of an upload in MB.
+        // The maximum file size of an upload in MB. Will refuse if you exceed this.
         'max_file_size' => '500',
 
         // Request expiration time, specified in relative time format or in seconds.
@@ -42,7 +43,7 @@ class Signature
         'expires' => '+6 hours',
 
         // Validation prefix for the filename.
-        // Server must check the filename to be started with this prefix.
+        // Server will check the filename starts with this prefix and fail if not.
         'valid_prefix' => '',
         
     ];
@@ -118,7 +119,7 @@ class Signature
             $middle = "";
         }
 
-        return "//" . $this->bucket . "." . self::SERVICE . $middle . ".amazonaws.com";
+        return "//" . urlencode($this->bucket) . "." . self::SERVICE . $middle . ".amazonaws.com";
     }
 
     /**
@@ -134,7 +135,7 @@ class Signature
     /**
      * Set/overwrite any default options.
      *
-     * @param $options
+     * @param array $options any options to override.
      */
     public function setOptions($options)
     {
@@ -145,7 +146,7 @@ class Signature
     /**
      * Get an AWS Signature V4 generated.
      *
-     * @return string the signature.
+     * @return string the aws v4 signature.
      */
     public function getSignature()
     {
@@ -158,7 +159,8 @@ class Signature
     }
 
     /**
-     * Generate the necessary hidden inputs to go within the form.
+     * Generate the necessary hidden inputs to go within the form. These inputs should match what's being send in
+     * the policy.
      *
      * @param bool $addKey whether to add the 'key' input (filename), defaults to yes.
      *
@@ -171,8 +173,9 @@ class Signature
             $this->getSignature();
         }
 
+        // Note: using application/octet-stream as a general mime-type, but this should be set ideally.
         $inputs = [
-            'Content-Type' => '',
+            'Content-Type' => 'application/octet-stream',
             'acl' => $this->options['acl']->getName(),
             'success_action_status' => $this->options['success_status'],
             'policy' => $this->base64Policy,
@@ -198,11 +201,11 @@ class Signature
      */
     public function getFormInputsAsHtml()
     {
-        $html = "";
+        $html = '';
         foreach ($this->getFormInputs() as $name => $value) {
             $html .= '<input type="hidden" name="' . $name . '" value="' . $value . '" />' . PHP_EOL;
         }
-        return $html;
+        return trim($html);
     }
 
 
@@ -259,10 +262,10 @@ class Signature
         ];
 
         // Iterates over the data, hashing it each time.
-        $signingKey = 'AWS4' . $this->secret;
-        foreach ($signatureData as $data) {
-            $signingKey = $this->keyHash($data, $signingKey);
-        }
+        $initial = 'AWS4' . $this->secret;
+        $signingKey = array_reduce($signatureData, function($key, $data) {
+            return $this->keyHash($data, $key);
+        }, $initial);
 
         // Finally, use the signing key to hash the policy.
         $this->signature = $this->keyHash($this->base64Policy, $signingKey, false);
