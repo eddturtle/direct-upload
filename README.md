@@ -21,7 +21,8 @@ Once we have the package installed we can make our uploader object, like so: (re
 
     use EddTurtle\DirectUpload\Signature;
 
-    require_once "vendor/autoload.php";
+    // Require Composer's autoloader
+    require_once __DIR__ . "/vendor/autoload.php";
 
     $upload = new Signature(
         "YOUR_S3_KEY",
@@ -35,9 +36,12 @@ More info on finding your region @ http://amzn.to/1FtPG6r
 Then, using the object we've just made, we can use it to generate the form's url and all the needed hidden inputs
 
     <form action="<?php echo $upload->getFormUrl(); ?>" method="POST" enctype="multipart/form-data">
+
         <?php echo $upload->getFormInputsAsHtml(); ?>
+
         <!-- Other inputs go here -->
         <input type="file" name="file">
+
     </form>
     
 ### Example
