@@ -20,11 +20,12 @@ class Acl
 
     public function __construct($acl)
     {
-        $this->setName(strtolower($acl));
+        $this->setName($acl);
     }
 
     public function setName($acl)
     {
+        $acl = strtolower($acl);
         if (in_array($acl, $this->possibleOptions)) {
             $this->name = $acl;
         } else {

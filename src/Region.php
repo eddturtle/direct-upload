@@ -22,11 +22,12 @@ class Region
 
     public function __construct($region)
     {
-        $this->setName(strtolower($region));
+        $this->setName($region);
     }
 
     public function setName($region)
     {
+        $region = strtolower($region);
         if (in_array($region, $this->possibleOptions)) {
             $this->name = $region;
         } else {
