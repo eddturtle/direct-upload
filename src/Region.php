@@ -22,7 +22,7 @@ class Region
 
     public function __construct($region)
     {
-        $this->setName($region);
+        $this->setName(strtolower($region));
     }
 
     public function setName($region)

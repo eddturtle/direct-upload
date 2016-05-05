@@ -20,7 +20,7 @@ class Acl
 
     public function __construct($acl)
     {
-        $this->setName($acl);
+        $this->setName(strtolower($acl));
     }
 
     public function setName($acl)
