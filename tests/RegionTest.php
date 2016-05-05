@@ -2,7 +2,6 @@
 
 namespace EddTurtle\DirectUpload\Tests;
 
-use EddTurtle\DirectUpload\InvalidRegionException;
 use EddTurtle\DirectUpload\Region;
 
 class RegionTest extends \PHPUnit_Framework_TestCase
@@ -15,13 +14,18 @@ class RegionTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($object->getName() === "eu-west-1");
     }
 
+    /**
+     * @expectedException \EddTurtle\DirectUpload\InvalidRegionException
+     */
     public function testInvalid()
     {
-        try {
-            new Region('invalid region');
-        } catch (\Exception $e) {
-            $this->assertTrue($e instanceof InvalidRegionException);
-        }
+        new Region('invalid region');
+    }
+
+    public function testLowerCaseName()
+    {
+        $object = new Region('eu-WEST-1');
+        $this->assertTrue($object->getName() === "eu-west-1");
     }
 
 }

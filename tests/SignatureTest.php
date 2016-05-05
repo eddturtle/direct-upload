@@ -7,40 +7,45 @@ use EddTurtle\DirectUpload\Signature;
 class SignatureTest extends \PHPUnit_Framework_TestCase
 {
 
-    public $region = "eu-west-1";
+    // contains a / just to test name in url is urlencoded
+    private $testBucket = "test/bucket";
+    private $testRegion = "eu-west-1";
 
     public function testInit()
     {
-        $object = new Signature('key', 'secret', 'testbucket', $this->region);
+        $object = new Signature('key', 'secret', $this->testBucket, $this->testRegion);
         $this->assertTrue($object instanceof Signature);
+        return $object;
     }
 
+    /**
+     * @expectedException \InvalidArgumentException
+     */
     public function testMissingKeyOrSecret()
     {
-        try {
-            new Signature('', '', '', $this->region);
-        } catch (\Exception $e) {
-            $this->assertTrue($e instanceof \InvalidArgumentException);
-        }
+        new Signature('', '', '', $this->testRegion);
     }
 
-    public function testBuildUrl()
+    /**
+     * @depends testInit
+     * @param Signature $object
+     */
+    public function testBuildUrl($object)
     {
-        $testBucket = 'test';
-        $object = new Signature('key', 'secret', $testBucket, $this->region);
         $url = $object->getFormUrl();
-        $this->assertEquals("//" . $testBucket . ".s3-" . $this->region . ".amazonaws.com", $url);
+        $this->assertEquals("//" . urlencode($this->testBucket) . ".s3-" . $this->testRegion . ".amazonaws.com", $url);
     }
 
     public function testBuildUrlForUsEast()
     {
+        // Note: US East shouldn't contain region in url.
         $url = (new Signature('key', 'secret', 'bucket', 'us-east-1'))->getFormUrl();
         $this->assertEquals("//bucket.s3.amazonaws.com", $url);
     }
 
     public function testGetOptions()
     {
-        $object = new Signature('key', 'secret', 'test', $this->region);
+        $object = new Signature('key', 'secret', 'test', $this->testRegion);
         $options = $object->getOptions();
         $this->assertTrue(count($options) === 6);
         $this->assertArrayHasKey('success_status', $options);
@@ -53,7 +58,7 @@ class SignatureTest extends \PHPUnit_Framework_TestCase
 
     public function testGetSignature()
     {
-        $object = new Signature('key', 'secret', 'testbucket', $this->region);
+        $object = new Signature('key', 'secret', 'testbucket', $this->testRegion);
         $signature = $object->getSignature();
 
         $this->assertTrue(strlen($signature) === 64);
@@ -63,7 +68,7 @@ class SignatureTest extends \PHPUnit_Framework_TestCase
 
     public function testGetFormInputs()
     {
-        $object = new Signature('key', 'secret', 'testbucket', $this->region, [
+        $object = new Signature('key', 'secret', 'testbucket', $this->testRegion, [
             'acl' => 'public-read',
             'success_status' => '200'
         ]);
@@ -84,19 +89,31 @@ class SignatureTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('200', $inputs['success_action_status']);
         $this->assertEquals(gmdate("Ymd\THis\Z"), $inputs['X-amz-date']);
         $this->assertEquals(Signature::ALGORITHM, $inputs['X-amz-algorithm']);
+
+        return $object;
+    }
+
+    /**
+     * @depends testGetFormInputs
+     * @param Signature $object
+     */
+    public function testGetFormInputsAsHtml($object)
+    {
+        $html = $object->getFormInputsAsHtml();
+        $this->assertContains($object->getSignature(), $html);
     }
 
     public function testInvalidExpiryDate()
     {
         // Test Successful Build
-        $object = new Signature('key', 'secret', 'testbucket', $this->region, [
+        $object = new Signature('key', 'secret', 'testbucket', $this->testRegion, [
             'expires' => '+6 hours'
         ]);
         $object->getFormInputs(); // Forces the signature to be built
 
         // Test Exception
         try {
-            $object = new Signature('key', 'secret', 'testbucket', $this->region, [
+            $object = new Signature('key', 'secret', 'testbucket', $this->testRegion, [
                 'expires' => PHP_INT_MAX
             ]);
             $object->getFormInputs(); // Forces the signature to be built

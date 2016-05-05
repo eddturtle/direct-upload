@@ -3,7 +3,6 @@
 namespace EddTurtle\DirectUpload\Tests;
 
 use EddTurtle\DirectUpload\Acl;
-use EddTurtle\DirectUpload\InvalidAclException;
 
 class AclTest extends \PHPUnit_Framework_TestCase
 {
@@ -15,13 +14,18 @@ class AclTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($object->getName() === "private");
     }
 
+    /**
+     * @expectedException \EddTurtle\DirectUpload\InvalidAclException
+     */
     public function testInvalid()
     {
-        try {
-            new Acl('invalid acl type');
-        } catch (\Exception $e) {
-            $this->assertTrue($e instanceof InvalidAclException);
-        }
+        new Acl('invalid acl type');
+    }
+
+    public function testLowerCaseName()
+    {
+        $object = new Acl('PRIVATE');
+        $this->assertTrue($object->getName() === "private");
     }
 
 }
