@@ -45,6 +45,9 @@ class Signature
         // Validation prefix for the filename.
         // Server will check the filename starts with this prefix and fail if not.
         'valid_prefix' => '',
+
+        // Content-type to be uploaded
+        'content_type' => 'application/octet-stream',
         
     ];
 
@@ -173,9 +176,8 @@ class Signature
             $this->getSignature();
         }
 
-        // Note: using application/octet-stream as a general mime-type, but this should be set ideally.
         $inputs = [
-            'Content-Type' => 'application/octet-stream',
+            'Content-Type' => $this->options['content_type'],
             'acl' => $this->options['acl']->getName(),
             'success_action_status' => $this->options['success_status'],
             'policy' => $this->base64Policy,
@@ -238,7 +240,7 @@ class Signature
                 ['bucket' => $this->bucket],
                 ['acl' => $this->options['acl']->getName()],
                 ['starts-with', '$key', $this->options['valid_prefix']],
-                ['starts-with', '$Content-Type', ''],
+                ['eq', '$Content-Type', $this->options['content_type']],
                 ['content-length-range', 0, $maxSize],
                 ['success_action_status' => $this->options['success_status']],
                 ['x-amz-credential' => $this->credentials],
