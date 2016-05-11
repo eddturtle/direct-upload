@@ -47,7 +47,7 @@ class SignatureTest extends \PHPUnit_Framework_TestCase
     {
         $object = new Signature('key', 'secret', 'test', $this->testRegion);
         $options = $object->getOptions();
-        $this->assertTrue(count($options) === 6);
+        $this->assertTrue(count($options) === 7);
         $this->assertArrayHasKey('success_status', $options);
         $this->assertArrayHasKey('acl', $options);
         $this->assertArrayHasKey('default_filename', $options);

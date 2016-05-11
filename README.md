@@ -7,6 +7,8 @@
 
 This package is designed to build the necessary signature (v4), policy and form inputs when sending files directly to Amazon's S3 service. This project was sprouted from [this blog post](https://www.designedbyaturtle.co.uk/2013/direct-upload-to-s3-with-a-little-help-from-jquery/) which might help explain how the code works and how to set it up. The blog post also has lots of useful comments, which might help you out if you're having problems.
 
+Supports PHP 5.5+ (inc. 7)
+
 ### Install
 
 This package can be installed using Composer by running:
@@ -68,15 +70,15 @@ When uploading a file to S3 it's important that the bucket has a CORS configurat
 
 Options can be passed into the Signature class as a fifth parameter, below is a list of possible options which can be overwritten.
 
-| Option           | Default                    | Description  |
-| ---------------- | -------------------------- |------------- |
-| success_status   | 201                        | The http response code from the server on success. Should be within the 200's |
-| acl              | private                    | If the uploaded file is private (requires authentication) or is public, for a full list of options visit http://amzn.to/1SSOgwO |
-| default_filename | ${filename}                | The name the file will have on s3, ${filename} will translate to the file's current name. |
-| max_file_size    | 500                        | The maximum file size of an upload, specified in MB. |
-| expires          | +6 hours                   | The time the signature will invalidate, specified as value passed into strtotime(). Min: 1 ("+1 second"), max: 604800 ("+7 days"). |
-| valid_prefix     |                            | Assures that all upload keys (file names) start with the following string. |
-| content_type     | 'application/octet-stream' | The type of content to be uploaded. You can use generic 'application/octet-stream' if your don't know the content type that will be uploaded |
+| Option           | Default                  | Description  |
+| ---------------- | ------------------------ |------------- |
+| success_status   | 201                      | The http response code from the server on success. Should be within the 200's |
+| acl              | private                  | If the uploaded file is private (requires authentication) or is public, for a full list of options visit http://amzn.to/1SSOgwO |
+| default_filename | ${filename}              | The name the file will have on s3, ${filename} will translate to the file's current name. |
+| max_file_size    | 500                      | The maximum file size of an upload, specified in MB. |
+| expires          | +6 hours                 | The time the signature will invalidate, specified as value passed into strtotime(). Min: 1 ("+1 second"), max: 604800 ("+7 days"). |
+| valid_prefix     |                          | Assures that all upload keys (file names) start with the following string. |
+| content_type     | application/octet-stream | The type of content to be uploaded. You can use generic 'application/octet-stream' if your don't know the content type that will be uploaded |
 
 For example:
 
