@@ -47,7 +47,7 @@ class Signature
         'valid_prefix' => '',
 
         // Content-type to be uploaded
-        'content_type' => 'application/octet-stream',
+        'content_type' => '',
         
     ];
 
@@ -240,7 +240,7 @@ class Signature
                 ['bucket' => $this->bucket],
                 ['acl' => $this->options['acl']->getName()],
                 ['starts-with', '$key', $this->options['valid_prefix']],
-                ['eq', '$Content-Type', $this->options['content_type']],
+                [(empty($this->options['content_type']) ? 'starts-with' : 'eq'), '$Content-Type', $this->options['content_type']],
                 ['content-length-range', 0, $maxSize],
                 ['success_action_status' => $this->options['success_status']],
                 ['x-amz-credential' => $this->credentials],
