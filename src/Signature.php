@@ -24,30 +24,37 @@ class Signature
      */
     protected $options = [
         
-        // If the upload is a success, the http code we get back from S3.
-        'success_status' => '201',
+        // If the upload is a success, this is the http code we get back from S3.
+        // By default this will be a 201 Created.
+        'success_status' => 201,
 
         // If the file should be private/public-read/public-write.
         // This is file specific, not bucket. More info: http://amzn.to/1SSOgwO
         'acl' => 'private',
 
-        // The file's name, can be set with JS by changing the input[name="key"]
+        // The file's name on s3, can be set with JS by changing the input[name="key"].
         // ${filename} will just mean the original filename of the file being uploaded.
         'default_filename' => '${filename}',
 
-        // The maximum file size of an upload in MB. Will refuse if you exceed this.
-        'max_file_size' => '500',
+        // The maximum file size of an upload in MB. Will refuse with a EntityTooLarge
+        // and 400 Bad Request if you exceed this limit.
+        'max_file_size' => 500,
 
         // Request expiration time, specified in relative time format or in seconds.
-        // min: 1 ("+1 second"), max: 604800 ("+7 days")
+        // min: 1 (+1 second), max: 604800 (+7 days)
         'expires' => '+6 hours',
 
-        // Validation prefix for the filename.
-        // Server will check the filename starts with this prefix and fail if not.
+        // Server will check that the filename starts with this prefix and fail
+        // with a AccessDenied 403 if not.
         'valid_prefix' => '',
 
-        // Content-type to be uploaded
+        // Strictly only allow a single content type, blank will allow all. Will fail
+        // with a AccessDenied 403 is this condition is not met.
         'content_type' => '',
+
+        // Any additional inputs to add to the form. This is an array of name => value
+        // pairs e.g. ['Content-Disposition' => 'attachment']
+        'additional_inputs' => []
         
     ];
 
@@ -89,7 +96,7 @@ class Signature
      * @param string $key    the AWS API Key to use.
      * @param string $secret the AWS API Secret to use.
      */
-    public function setAwsCredentials($key, $secret)
+    protected function setAwsCredentials($key, $secret)
     {
         // Key
         if (!empty($key)) {
@@ -144,6 +151,9 @@ class Signature
     {
         $this->options = $options + $this->options;
         $this->options['acl'] = new Acl($this->options['acl']);
+
+        // Return HTTP code must be a string
+        $this->options['success_status'] = (string)$this->options['success_status'];
     }
 
     /**
@@ -171,10 +181,7 @@ class Signature
      */
     public function getFormInputs($addKey = true)
     {
-        // Only generate the signature once
-        if (is_null($this->signature)) {
-            $this->getSignature();
-        }
+        $this->getSignature();
 
         $inputs = [
             'Content-Type' => $this->options['content_type'],
@@ -186,6 +193,8 @@ class Signature
             'X-amz-date' => $this->getFullDateFormat(),
             'X-amz-signature' => $this->signature
         ];
+
+        $inputs = array_merge($inputs, $this->options['additional_inputs']);
 
         if ($addKey) {
             // Note: The Key (filename) will need to be populated with JS on upload
@@ -199,15 +208,17 @@ class Signature
     /**
      * Based on getFormInputs(), this will build up the html to go within the form.
      *
+     * @param bool $addKey whether to add the 'key' input (filename), defaults to yes.
+     *
      * @return string html of hidden form inputs.
      */
-    public function getFormInputsAsHtml()
+    public function getFormInputsAsHtml($addKey = true)
     {
-        $html = '';
-        foreach ($this->getFormInputs() as $name => $value) {
-            $html .= '<input type="hidden" name="' . $name . '" value="' . $value . '" />' . PHP_EOL;
+        $inputs = [];
+        foreach ($this->getFormInputs($addKey) as $name => $value) {
+            $inputs[] = '<input type="hidden" name="' . $name . '" value="' . $value . '" />';
         }
-        return trim($html);
+        return implode(PHP_EOL, $inputs);
     }
 
 
@@ -233,14 +244,18 @@ class Signature
      */
     protected function generatePolicy()
     {
+        // Work out options
         $maxSize = $this->mbToBytes($this->options['max_file_size']);
+        $contentTypePrefix = (empty($this->options['content_type']) ? 'starts-with' : 'eq');
+
+        // Build Policy
         $policy = [
             'expiration' => $this->getExpirationDate(),
             'conditions' => [
                 ['bucket' => $this->bucket],
                 ['acl' => $this->options['acl']->getName()],
                 ['starts-with', '$key', $this->options['valid_prefix']],
-                [(empty($this->options['content_type']) ? 'starts-with' : 'eq'), '$Content-Type', $this->options['content_type']],
+                [$contentTypePrefix, '$Content-Type', $this->options['content_type']],
                 ['content-length-range', 0, $maxSize],
                 ['success_action_status' => $this->options['success_status']],
                 ['x-amz-credential' => $this->credentials],
@@ -248,6 +263,12 @@ class Signature
                 ['x-amz-date' => $this->getFullDateFormat()]
             ]
         ];
+
+        // Add on the additional inputs
+        foreach ($this->options['additional_inputs'] as $name => $value) {
+            $policy['conditions'][] = ['starts-with', '$' . $name, $value];
+        }
+
         $this->base64Policy = base64_encode(json_encode($policy));
     }
 

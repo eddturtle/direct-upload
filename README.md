@@ -5,7 +5,9 @@
 [![Total Downloads](https://poser.pugx.org/eddturtle/direct-upload/downloads)](https://packagist.org/packages/eddturtle/direct-upload)
 [![License](https://poser.pugx.org/eddturtle/direct-upload/license)](https://packagist.org/packages/eddturtle/direct-upload)
 
-This package is designed to build the necessary signature (v4), policy and form inputs when sending files directly to Amazon's S3 service. This project was sprouted from [this blog post](https://www.designedbyaturtle.co.uk/2013/direct-upload-to-s3-with-a-little-help-from-jquery/) which might help explain how the code works and how to set it up. The blog post also has lots of useful comments, which might help you out if you're having problems.
+This package is designed to build the necessary signature (v4), policy and form inputs when sending files directly to Amazon's S3 service. This is especially useful when uploading from cloud platforms and help to build '[twelve factor apps](http://12factor.net/backing-services)'.
+
+This project was sprouted from [this blog post](https://www.designedbyaturtle.co.uk/2013/direct-upload-to-s3-with-a-little-help-from-jquery/) which might help explain how the code works and how to set it up. The blog post also has lots of useful comments, which might help you out if you're having problems.
 
 Supports PHP 5.5+ (inc. 7)
 
@@ -40,8 +42,6 @@ Then, using the object we've just made, we can use it to generate the form's url
     <form action="<?php echo $upload->getFormUrl(); ?>" method="POST" enctype="multipart/form-data">
 
         <?php echo $upload->getFormInputsAsHtml(); ?>
-
-        <!-- Other inputs go here -->
         <input type="file" name="file">
 
     </form>
@@ -52,7 +52,7 @@ We have an [example project](https://github.com/eddturtle/direct-upload-s3-signa
 
 ### S3 CORS Configuration
 
-When uploading a file to S3 it's important that the bucket has a CORS configuration that's open to accepting files from elsewhere. Here's an example CORS setup:
+When uploading a file to S3 it's important that the bucket has a [CORS configuration](http://docs.aws.amazon.com/AmazonS3/latest/dev/cors.html) that's open to accepting files from elsewhere. Here's an example CORS setup:
 
     <?xml version="1.0" encoding="UTF-8"?>
     <CORSConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
@@ -70,28 +70,31 @@ When uploading a file to S3 it's important that the bucket has a CORS configurat
 
 Options can be passed into the Signature class as a fifth parameter, below is a list of possible options which can be overwritten.
 
-| Option           | Default     | Description  |
-| ---------------- | ----------- |------------- |
-| success_status   | 201         | The http response code from the server on success. Should be within the 200's |
-| acl              | private     | If the uploaded file is private (requires authentication) or is public, for a full list of options visit http://amzn.to/1SSOgwO |
-| default_filename | ${filename} | The name the file will have on s3, ${filename} will translate to the file's current name. |
-| max_file_size    | 500         | The maximum file size of an upload, specified in MB. |
-| expires          | +6 hours    | The time the signature will invalidate, specified as value passed into strtotime(). Min: 1 ("+1 second"), max: 604800 ("+7 days"). |
-| valid_prefix     |             | Assures that all upload keys (file names) start with the following string. |
-| content_type     |             | Restrict the type of content to be uploaded by mime/type. You can use generic 'application/octet-stream' if you don't know the content type. |
+| Option            | Default     | Description  |
+| ----------------- | ----------- |------------- |
+| success_status    | 201         | If the upload is a success, this is the http code we get back from S3. By default this will be a 201 Created. |
+| acl               | private     | If the file should be private/public-read/public-write. This is file specific, not bucket. More info: http://amzn.to/1SSOgwO |
+| default_filename  | ${filename} | The file's name on s3, can be set with JS by changing the input[name="key"]. ${filename} will just mean the original filename of the file being uploaded. |
+| max_file_size     | 500         | The maximum file size of an upload in MB. Will refuse with a EntityTooLarge and 400 Bad Request if you exceed this limit. |
+| expires           | +6 hours    | Request expiration time, specified in relative time format or in seconds. min: 1 (+1 second), max: 604800 (+7 days) |
+| valid_prefix      |             | Server will check that the filename starts with this prefix and fail with a AccessDenied 403 if not. |
+| content_type      |             | Strictly only allow a single content type, blank will allow all. Will fail with a AccessDenied 403 is this condition is not met. |
+| additional_inputs |             | Any additional inputs to add to the form. This is an array of name => value pairs e.g. ['Content-Disposition' => 'attachment'] |
 
 For example:
 
-    $upload = new Signature("", "", "", "eu-west-1", [
+    $upload = new Signature("", "", "", "", [
         'acl' => 'public-read',
-        'max_file_size' => 10
+        'max_file_size' => 10,
+        'additional_inputs' => [
+            'Content-Disposition' => 'attachment'
+        ]
     ]);
 
 ### Available Signature Methods
 
 | Method                | Description  |
 | --------------------- | ------------ |
-| setAwsCredentials()   | Allows you to change your AWS credentials after instantiating. |
 | getFormUrl()          | Gets the url to go into your form's action attribute (will work on http and https). |
 | getOptions()          | Gets all the options which are currently set, which if unchanged would be the default options. |
 | setOptions()          | Change any options after the signature has been instantiated. |
