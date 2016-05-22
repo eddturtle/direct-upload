@@ -7,7 +7,7 @@
 
 This package is designed to build the necessary signature (v4), policy and form inputs when sending files directly to Amazon's S3 service. This is especially useful when uploading from cloud platforms and help to build '[twelve factor apps](http://12factor.net/backing-services)'.
 
-This project was sprouted from [this blog post](https://www.designedbyaturtle.co.uk/2013/direct-upload-to-s3-with-a-little-help-from-jquery/) which might help explain how the code works and how to set it up. The blog post also has lots of useful comments, which might help you out if you're having problems.
+This project was sprouted from [this blog post](https://www.designedbyaturtle.co.uk/2015/direct-upload-to-s3-using-aws-signature-v4-php/) which might help explain how the code works and how to set it up. The blog post also has lots of useful comments, which might help you out if you're having problems.
 
 Supports PHP 5.5+ (inc. 7)
 
@@ -37,7 +37,7 @@ Once we have the package installed we can make our uploader object, like so: (re
     
 More info on finding your region @ http://amzn.to/1FtPG6r
 
-Then, using the object we've just made, we can use it to generate the form's url and all the needed hidden inputs
+Then, using the object we've just made, we can generate the form's url and all the needed hidden inputs.
 
     <form action="<?php echo $upload->getFormUrl(); ?>" method="POST" enctype="multipart/form-data">
 
