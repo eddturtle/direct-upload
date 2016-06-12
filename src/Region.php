@@ -2,6 +2,11 @@
 
 namespace EddTurtle\DirectUpload;
 
+/**
+ * Class Region: An AWS construct to allow rigid defining of aws regions.
+ * 
+ * @package EddTurtle\DirectUpload
+ */
 class Region
 {
 

@@ -2,6 +2,11 @@
 
 namespace EddTurtle\DirectUpload;
 
+/**
+ * Class Acl: An AWS construct to allow you define what access level should be applied to a file.
+ *
+ * @package EddTurtle\DirectUpload
+ */
 class Acl
 {
 

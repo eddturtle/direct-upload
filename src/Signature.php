@@ -248,7 +248,7 @@ class Signature
             'expiration' => $this->getExpirationDate(),
             'conditions' => [
                 ['bucket' => $this->bucket],
-                ['acl' => $this->options['acl']],
+                ['acl' => (string)$this->options['acl']],
                 ['starts-with', '$key', $this->options['valid_prefix']],
                 $this->getPolicyContentTypeArray(),
                 ['content-length-range', 0, $this->mbToBytes($this->options['max_file_size'])],
@@ -287,7 +287,7 @@ class Signature
     {
         $signatureData = [
             $this->getShortDateFormat(),
-            $this->region,
+            (string)$this->region,
             self::SERVICE,
             self::REQUEST_TYPE
         ];
