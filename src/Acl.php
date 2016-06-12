@@ -23,6 +23,11 @@ class Acl
         $this->setName($acl);
     }
 
+    public function __toString()
+    {
+        return $this->getName();
+    }
+
     public function setName($acl)
     {
         $acl = strtolower($acl);

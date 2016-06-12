@@ -7,7 +7,7 @@ use EddTurtle\DirectUpload\Signature;
 class SignatureTest extends \PHPUnit_Framework_TestCase
 {
 
-    // contains a / just to test name in url is urlencoded
+    // Bucket contains a '/' just to test that the name in the url is urlencoded.
     private $testBucket = "test/bucket";
     private $testRegion = "eu-west-1";
 
@@ -70,18 +70,15 @@ class SignatureTest extends \PHPUnit_Framework_TestCase
     {
         $object = new Signature('key', 'secret', 'testbucket', $this->testRegion, [
             'acl' => 'public-read',
-            'success_status' => '200'
+            'success_status' => 200
         ]);
         $inputs = $object->getFormInputs();
 
         // Check Everything's There
         $this->assertArrayHasKey('Content-Type', $inputs);
-        $this->assertArrayHasKey('acl', $inputs);
-        $this->assertArrayHasKey('success_action_status', $inputs);
         $this->assertArrayHasKey('policy', $inputs);
         $this->assertArrayHasKey('X-amz-credential', $inputs);
         $this->assertArrayHasKey('X-amz-algorithm', $inputs);
-        $this->assertArrayHasKey('X-amz-date', $inputs);
         $this->assertArrayHasKey('X-amz-signature', $inputs);
 
         // Check Values
@@ -89,6 +86,8 @@ class SignatureTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('200', $inputs['success_action_status']);
         $this->assertEquals(gmdate("Ymd\THis\Z"), $inputs['X-amz-date']);
         $this->assertEquals(Signature::ALGORITHM, $inputs['X-amz-algorithm']);
+        $this->assertEquals('${filename}', $inputs['key']);
+        $this->assertEquals('key/' . date('Ymd') . '/' . $this->testRegion . '/s3/aws4_request', $inputs['X-amz-credential']);
 
         return $object;
     }
@@ -101,6 +100,7 @@ class SignatureTest extends \PHPUnit_Framework_TestCase
     {
         $html = $object->getFormInputsAsHtml();
         $this->assertContains($object->getSignature(), $html);
+        $this->assertStringStartsWith('<input type', $html);
     }
 
     public function testInvalidExpiryDate()

@@ -25,6 +25,11 @@ class Region
         $this->setName($region);
     }
 
+    public function __toString()
+    {
+        return $this->getName();
+    }
+
     public function setName($region)
     {
         $region = strtolower($region);
