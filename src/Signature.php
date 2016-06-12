@@ -99,18 +99,16 @@ class Signature
     protected function setAwsCredentials($key, $secret)
     {
         // Key
-        if (!empty($key)) {
-            $this->key = $key;
-        } else {
+        if (empty($key) || $key === "YOUR_S3_KEY") {
             throw new \InvalidArgumentException("Invalid AWS Key");
         }
+        $this->key = $key;
 
         // Secret
-        if (!empty($secret)) {
-            $this->secret = $secret;
-        } else {
+        if (empty($secret) || $secret === "YOUR_S3_SECRET") {
             throw new \InvalidArgumentException("Invalid AWS Secret");
         }
+        $this->secret = $secret;
     }
 
     /**
