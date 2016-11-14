@@ -5,6 +5,7 @@
 [![Total Downloads](https://poser.pugx.org/eddturtle/direct-upload/downloads)](https://packagist.org/packages/eddturtle/direct-upload)
 [![License](https://poser.pugx.org/eddturtle/direct-upload/license)](https://packagist.org/packages/eddturtle/direct-upload)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/eddturtle/direct-upload/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/eddturtle/direct-upload/badges/quality-score.png?b=master)
+
 This package is designed to build the necessary signature (v4), policy and form inputs when sending files directly to Amazon's S3 service. This is especially useful when uploading from cloud platforms and help to build '[twelve factor apps](http://12factor.net/backing-services)'.
 
 This project was sprouted from [this blog post](https://www.designedbyaturtle.co.uk/2015/direct-upload-to-s3-using-aws-signature-v4-php/) which might help explain how the code works and how to set it up. The blog post also has lots of useful comments, which might help you out if you're having problems.
