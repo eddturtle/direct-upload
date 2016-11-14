@@ -99,18 +99,16 @@ class Signature
     protected function setAwsCredentials($key, $secret)
     {
         // Key
-        if (!empty($key)) {
-            $this->key = $key;
-        } else {
+        if (empty($key) || $key === "YOUR_S3_KEY") {
             throw new \InvalidArgumentException("Invalid AWS Key");
         }
+        $this->key = $key;
 
         // Secret
-        if (!empty($secret)) {
-            $this->secret = $secret;
-        } else {
+        if (empty($secret) || $secret === "YOUR_S3_SECRET") {
             throw new \InvalidArgumentException("Invalid AWS Secret");
         }
+        $this->secret = $secret;
     }
 
     /**
@@ -120,7 +118,7 @@ class Signature
      */
     public function getFormUrl()
     {
-        $region = $this->region->getName();
+        $region = (string)$this->region;
 
         // Only the us-east-1 region is exempt from needing the region in the url.
         if ($region !== "us-east-1") {
@@ -185,7 +183,7 @@ class Signature
 
         $inputs = [
             'Content-Type' => $this->options['content_type'],
-            'acl' => $this->options['acl']->getName(),
+            'acl' => $this->options['acl'],
             'success_action_status' => $this->options['success_status'],
             'policy' => $this->base64Policy,
             'X-amz-credential' => $this->credentials,
@@ -232,7 +230,7 @@ class Signature
         $scope = [
             $this->key,
             $this->getShortDateFormat(),
-            $this->region->getName(),
+            $this->region,
             self::SERVICE,
             self::REQUEST_TYPE
         ];
@@ -244,32 +242,40 @@ class Signature
      */
     protected function generatePolicy()
     {
-        // Work out options
-        $maxSize = $this->mbToBytes($this->options['max_file_size']);
-        $contentTypePrefix = (empty($this->options['content_type']) ? 'starts-with' : 'eq');
-
-        // Build Policy
         $policy = [
             'expiration' => $this->getExpirationDate(),
             'conditions' => [
                 ['bucket' => $this->bucket],
-                ['acl' => $this->options['acl']->getName()],
+                ['acl' => (string)$this->options['acl']],
                 ['starts-with', '$key', $this->options['valid_prefix']],
-                [$contentTypePrefix, '$Content-Type', $this->options['content_type']],
-                ['content-length-range', 0, $maxSize],
+                $this->getPolicyContentTypeArray(),
+                ['content-length-range', 0, $this->mbToBytes($this->options['max_file_size'])],
                 ['success_action_status' => $this->options['success_status']],
                 ['x-amz-credential' => $this->credentials],
                 ['x-amz-algorithm' => self::ALGORITHM],
                 ['x-amz-date' => $this->getFullDateFormat()]
             ]
         ];
+        $policy = $this->addAdditionalInputs($policy);
+        $this->base64Policy = base64_encode(json_encode($policy));
+    }
 
-        // Add on the additional inputs
+    private function getPolicyContentTypeArray()
+    {
+        $contentTypePrefix = (empty($this->options['content_type']) ? 'starts-with' : 'eq');
+        return [
+            $contentTypePrefix,
+            '$Content-Type',
+            $this->options['content_type']
+        ];
+    }
+
+    private function addAdditionalInputs($policy)
+    {
         foreach ($this->options['additional_inputs'] as $name => $value) {
             $policy['conditions'][] = ['starts-with', '$' . $name, $value];
         }
-
-        $this->base64Policy = base64_encode(json_encode($policy));
+        return $policy;
     }
 
     /**
@@ -279,12 +285,12 @@ class Signature
     {
         $signatureData = [
             $this->getShortDateFormat(),
-            $this->region->getName(),
+            (string)$this->region,
             self::SERVICE,
             self::REQUEST_TYPE
         ];
 
-        // Iterates over the data, hashing it each time.
+        // Iterates over the data (defined in the array above), hashing it each time.
         $initial = 'AWS4' . $this->secret;
         $signingKey = array_reduce($signatureData, function($key, $data) {
             return $this->keyHash($data, $key);
