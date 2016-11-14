@@ -41,7 +41,7 @@ class Signature
         'max_file_size' => 500,
 
         // Request expiration time, specified in relative time format or in seconds.
-        // min: 1 (+1 second), max: 604800 (+7 days)
+        // minimum of 1 (+1 second), maximum of 604800 (+7 days)
         'expires' => '+6 hours',
 
         // Server will check that the filename starts with this prefix and fail
@@ -199,7 +199,7 @@ class Signature
         if ($addKey) {
             // Note: The Key (filename) will need to be populated with JS on upload
             // if anything other than the filename is wanted.
-            $inputs['key'] = $this->options['valid_prefix'].$this->options['default_filename'];
+            $inputs['key'] = $this->options['valid_prefix'] . $this->options['default_filename'];
         }
 
         return $inputs;
@@ -309,10 +309,10 @@ class Signature
         }
     }
 
-    private function mbToBytes($mb)
+    private function mbToBytes($megaByte)
     {
-        if (is_numeric($mb)) {
-            return $mb * pow(1024, 2);
+        if (is_numeric($megaByte)) {
+            return $megaByte * pow(1024, 2);
         }
         return 0;
     }
