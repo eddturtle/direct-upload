@@ -23,7 +23,7 @@ class Signature
      * @var array
      */
     protected $options = [
-        
+
         // If the upload is a success, this is the http code we get back from S3.
         // By default this will be a 201 Created.
         'success_status' => 201,
@@ -55,7 +55,7 @@ class Signature
         // Any additional inputs to add to the form. This is an array of name => value
         // pairs e.g. ['Content-Disposition' => 'attachment']
         'additional_inputs' => []
-        
+
     ];
 
     private $key;
