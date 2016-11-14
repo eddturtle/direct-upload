@@ -20,7 +20,9 @@ class Region
         "ap-northeast-1",
         "ap-southeast-2",
         "ap-northeast-2",
-        "sa-east-1"
+        "sa-east-1",
+        "us-east-2",
+        "ap-south-1"
     ];
 
     private $name;

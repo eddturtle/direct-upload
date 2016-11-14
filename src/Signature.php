@@ -197,7 +197,7 @@ class Signature
         if ($addKey) {
             // Note: The Key (filename) will need to be populated with JS on upload
             // if anything other than the filename is wanted.
-            $inputs['key'] = $this->options['default_filename'];
+            $inputs['key'] = $this->options['valid_prefix'].$this->options['default_filename'];
         }
 
         return $inputs;
