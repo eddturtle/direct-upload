@@ -89,6 +89,11 @@ class SignatureTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('${filename}', $inputs['key']);
         $this->assertEquals('key/' . date('Ymd') . '/' . $this->testRegion . '/s3/aws4_request', $inputs['X-amz-credential']);
 
+        // Test all values as string (and not objects which get cast later)
+        foreach ($inputs as $input) {
+            $this->assertInternalType('string', $input);
+        }
+
         return $object;
     }
 

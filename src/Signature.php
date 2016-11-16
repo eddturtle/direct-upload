@@ -183,7 +183,7 @@ class Signature
 
         $inputs = [
             'Content-Type' => $this->options['content_type'],
-            'acl' => $this->options['acl'],
+            'acl' => (string)$this->options['acl'],
             'success_action_status' => $this->options['success_status'],
             'policy' => $this->base64Policy,
             'X-amz-credential' => $this->credentials,
