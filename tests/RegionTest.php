@@ -28,4 +28,11 @@ class RegionTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($object->getName() === "eu-west-1");
     }
 
+    public function testToString()
+    {
+        $object = new Region('eu-WEST-1');
+        // Note: assertEquals doesn't work as it appears equal anyway
+        $this->assertTrue((string)$object === "eu-west-1");
+    }
+
 }

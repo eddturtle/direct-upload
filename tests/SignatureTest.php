@@ -27,6 +27,22 @@ class SignatureTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testUnchangedKey()
+    {
+        new Signature('YOUR_S3_KEY', 'secret', 'bucket', $this->testRegion);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testUnchangedSecret()
+    {
+        new Signature('key', 'YOUR_S3_SECRET', 'bucket', $this->testRegion);
+    }
+
+    /**
      * @depends testInit
      * @param Signature $object
      */
@@ -40,6 +56,10 @@ class SignatureTest extends \PHPUnit_Framework_TestCase
     {
         // Note: US East shouldn't contain region in url.
         $url = (new Signature('key', 'secret', 'bucket', 'us-east-1'))->getFormUrl();
+        $this->assertEquals("//bucket.s3.amazonaws.com", $url);
+
+        // Test default region param
+        $url = (new Signature('key', 'secret', 'bucket'))->getFormUrl();
         $this->assertEquals("//bucket.s3.amazonaws.com", $url);
     }
 
@@ -70,7 +90,8 @@ class SignatureTest extends \PHPUnit_Framework_TestCase
     {
         $object = new Signature('key', 'secret', 'testbucket', $this->testRegion, [
             'acl' => 'public-read',
-            'success_status' => 200
+            'success_status' => 200,
+            'valid_prefix' => 'test/'
         ]);
         $inputs = $object->getFormInputs();
 
@@ -86,7 +107,7 @@ class SignatureTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('200', $inputs['success_action_status']);
         $this->assertEquals(gmdate("Ymd\THis\Z"), $inputs['X-amz-date']);
         $this->assertEquals(Signature::ALGORITHM, $inputs['X-amz-algorithm']);
-        $this->assertEquals('${filename}', $inputs['key']);
+        $this->assertEquals('test/${filename}', $inputs['key']);
         $this->assertEquals('key/' . date('Ymd') . '/' . $this->testRegion . '/s3/aws4_request', $inputs['X-amz-credential']);
 
         // Test all values as string (and not objects which get cast later)
