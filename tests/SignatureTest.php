@@ -49,18 +49,18 @@ class SignatureTest extends \PHPUnit_Framework_TestCase
     public function testBuildUrl($object)
     {
         $url = $object->getFormUrl();
-        $this->assertEquals("//" . urlencode($this->testBucket) . ".s3-" . $this->testRegion . ".amazonaws.com", $url);
+        $this->assertEquals("//" . "s3-" . $this->testRegion . ".amazonaws.com/" . urlencode($this->testBucket), $url);
     }
 
     public function testBuildUrlForUsEast()
     {
         // Note: US East shouldn't contain region in url.
         $url = (new Signature('key', 'secret', 'bucket', 'us-east-1'))->getFormUrl();
-        $this->assertEquals("//bucket.s3.amazonaws.com", $url);
+        $this->assertEquals("//s3.amazonaws.com/bucket", $url);
 
         // Test default region param
         $url = (new Signature('key', 'secret', 'bucket'))->getFormUrl();
-        $this->assertEquals("//bucket.s3.amazonaws.com", $url);
+        $this->assertEquals("//s3.amazonaws.com/bucket", $url);
     }
 
     public function testGetOptions()
