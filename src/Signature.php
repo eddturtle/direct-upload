@@ -127,7 +127,7 @@ class Signature
             $middle = "";
         }
 
-        return "//" . urlencode($this->bucket) . "." . self::SERVICE . $middle . ".amazonaws.com";
+        return "//" . self::SERVICE . $middle . ".amazonaws.com" . "/" . urlencode($this->bucket);
     }
 
     /**
