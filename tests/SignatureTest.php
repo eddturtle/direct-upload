@@ -50,6 +50,10 @@ class SignatureTest extends \PHPUnit_Framework_TestCase
     {
         $url = $object->getFormUrl();
         $this->assertEquals("//" . "s3-" . $this->testRegion . ".amazonaws.com/" . urlencode($this->testBucket), $url);
+
+        // S3 Url is case-sensitive, make sure casing is preserved
+        $url = (new Signature('key', 'secret', 'CAPS_BUCKET', 'eu-west-1'))->getFormUrl();
+        $this->assertEquals("//s3-eu-west-1.amazonaws.com/CAPS_BUCKET", $url);
     }
 
     public function testBuildUrlForUsEast()
