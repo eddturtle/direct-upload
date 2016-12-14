@@ -24,6 +24,9 @@ class Acl
         "public-read-write",
     ];
 
+    /**
+     * @var string
+     */
     private $name;
 
     public function __construct($acl)
@@ -31,11 +34,19 @@ class Acl
         $this->setName($acl);
     }
 
+    /**
+     * @return string the aws acl policy name.
+     */
     public function __toString()
     {
         return $this->getName();
     }
 
+    /**
+     * @param string $acl the aws acl policy name.
+     *
+     * @throws InvalidAclException
+     */
     public function setName($acl)
     {
         $acl = strtolower($acl);
@@ -46,6 +57,9 @@ class Acl
         }
     }
 
+    /**
+     * @return string the aws acl policy name.
+     */
     public function getName()
     {
         return $this->name;

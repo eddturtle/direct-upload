@@ -19,8 +19,10 @@ class Region
         "ap-south-1",
         "ap-southeast-1",
         "ap-southeast-2",
+        "ca-central-1",
         "eu-central-1",
         "eu-west-1",
+        "eu-west-2",
         "sa-east-1",
         "us-east-1",
         "us-east-2",
@@ -28,6 +30,9 @@ class Region
         "us-west-2",
     ];
 
+    /**
+     * @var string
+     */
     private $name;
 
     public function __construct($region)
@@ -35,11 +40,19 @@ class Region
         $this->setName($region);
     }
 
+    /**
+     * @return string the aws region.
+     */
     public function __toString()
     {
         return $this->getName();
     }
 
+    /**
+     * @param string $region the aws region.
+     *
+     * @throws InvalidRegionException
+     */
     public function setName($region)
     {
         $region = strtolower($region);
@@ -50,6 +63,9 @@ class Region
         }
     }
 
+    /**
+     * @return string the aws region.
+     */
     public function getName()
     {
         return $this->name;

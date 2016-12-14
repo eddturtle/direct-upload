@@ -58,12 +58,29 @@ class Signature
 
     ];
 
+    /**
+     * @var string the AWS Key
+     */
     private $key;
+
+    /**
+     * @var string the AWS Secret
+     */
     private $secret;
 
+    /**
+     * @var string
+     */
     private $bucket;
+
+    /**
+     * @var Region
+     */
     private $region;
 
+    /**
+     * @var int the current unix timestamp
+     */
     private $time = null;
 
     private $credentials = null;
@@ -147,7 +164,9 @@ class Signature
      */
     public function setOptions($options)
     {
+        // Overwrite default options
         $this->options = $options + $this->options;
+
         $this->options['acl'] = new Acl($this->options['acl']);
 
         // Return HTTP code must be a string
