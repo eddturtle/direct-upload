@@ -22,30 +22,34 @@ This package can be installed using Composer by running:
 
 Once we have the package installed we can make our uploader object, like so: (remember to add your s3 details)
 
-    <?php
+```php
+<?php
 
-    use EddTurtle\DirectUpload\Signature;
+use EddTurtle\DirectUpload\Signature;
 
-    // Require Composer's autoloader
-    require_once __DIR__ . "/vendor/autoload.php";
+// Require Composer's autoloader
+require_once __DIR__ . "/vendor/autoload.php";
 
-    $upload = new Signature(
-        "YOUR_S3_KEY",
-        "YOUR_S3_SECRET",
-        "YOUR_S3_BUCKET",
-        "eu-west-1"
-    );
+$upload = new Signature(
+    "YOUR_S3_KEY",
+    "YOUR_S3_SECRET",
+    "YOUR_S3_BUCKET",
+    "eu-west-1"
+);
+```
     
 More info on finding your region @ http://amzn.to/1FtPG6r
 
 Then, using the object we've just made, we can generate the form's url and all the needed hidden inputs.
 
-    <form action="<?php echo $upload->getFormUrl(); ?>" method="POST" enctype="multipart/form-data">
+```html
+<form action="<?php echo $upload->getFormUrl(); ?>" method="POST" enctype="multipart/form-data">
 
-        <?php echo $upload->getFormInputsAsHtml(); ?>
-        <input type="file" name="file">
+    <?php echo $upload->getFormInputsAsHtml(); ?>
+    <input type="file" name="file">
 
-    </form>
+</form>
+```
     
 ### Example
     
@@ -55,17 +59,19 @@ We have an [example project](https://github.com/eddturtle/direct-upload-s3-signa
 
 When uploading a file to S3 it's important that the bucket has a [CORS configuration](http://docs.aws.amazon.com/AmazonS3/latest/dev/cors.html) that's open to accepting files from elsewhere. Here's an example CORS setup:
 
-    <?xml version="1.0" encoding="UTF-8"?>
-    <CORSConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
-        <CORSRule>
-            <AllowedOrigin>*</AllowedOrigin>
-            <AllowedMethod>GET</AllowedMethod>
-            <AllowedMethod>POST</AllowedMethod>
-            <AllowedMethod>PUT</AllowedMethod>
-            <MaxAgeSeconds>3000</MaxAgeSeconds>
-            <AllowedHeader>*</AllowedHeader>
-        </CORSRule>
-    </CORSConfiguration>
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<CORSConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
+    <CORSRule>
+        <AllowedOrigin>*</AllowedOrigin>
+        <AllowedMethod>GET</AllowedMethod>
+        <AllowedMethod>POST</AllowedMethod>
+        <AllowedMethod>PUT</AllowedMethod>
+        <MaxAgeSeconds>3000</MaxAgeSeconds>
+        <AllowedHeader>*</AllowedHeader>
+    </CORSRule>
+</CORSConfiguration>
+```
     
 ### Options
 
@@ -84,13 +90,15 @@ Options can be passed into the Signature class as a fifth parameter, below is a 
 
 For example:
 
-    $upload = new Signature("", "", "", "", [
-        'acl' => 'public-read',
-        'max_file_size' => 10,
-        'additional_inputs' => [
-            'Content-Disposition' => 'attachment'
-        ]
-    ]);
+```php
+$upload = new Signature("", "", "", "", [
+    'acl' => 'public-read',
+    'max_file_size' => 10,
+    'additional_inputs' => [
+        'Content-Disposition' => 'attachment'
+    ]
+]);
+```
 
 ### Available Signature Methods
 
