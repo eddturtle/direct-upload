@@ -96,8 +96,10 @@ class Signature
      * @param string $region  the s3 region this bucket is within. More info: http://amzn.to/1FtPG6r
      * @param array  $options any additional options, like acl and success status.
      */
-    public function __construct($key, $secret, $bucket, $region = "us-east-1", $options = [])
+    public function __construct($server = "amazon", $key, $secret, $bucket, $region = "us-east-1", $options = [])
     {
+        $this->server = $server;
+        
         $this->setAwsCredentials($key, $secret);
         $this->populateTime();
 
@@ -135,16 +137,21 @@ class Signature
      */
     public function getFormUrl()
     {
-        $region = (string)$this->region;
+        $server = (string)$this->server;
+        if ($server == "amazon") {
+            $region = (string)$this->region;
 
-        // Only the us-east-1 region is exempt from needing the region in the url.
-        if ($region !== "us-east-1") {
-            $middle = "-" . $region;
-        } else {
-            $middle = "";
+            // Only the us-east-1 region is exempt from needing the region in the url.
+            if ($region !== "us-east-1") {
+                $middle = "-" . $region;
+            } else {
+                $middle = "";
+            }
+
+            return "//" . self::SERVICE . $middle . ".amazonaws.com" . "/" . urlencode($this->bucket);
+        }else{
+            return "//" . $server . "/" . urlencode($this->bucket);
         }
-
-        return "//" . self::SERVICE . $middle . ".amazonaws.com" . "/" . urlencode($this->bucket);
     }
 
     /**
