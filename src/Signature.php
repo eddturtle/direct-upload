@@ -56,8 +56,8 @@ class Signature
         // so that files will be encrypted with AES256 when at rest.
         'encryption' => false,
 
-        // Allow S3 compatible solutions by specifying the the domain it should POST to. Must be
-        // a valid url in full (inc. http/https) otherwise will throw InvalidOptionException.
+        // Allow S3 compatible solutions by specifying the domain it should POST to. Must be
+        // a valid url (inc. http/https) otherwise will throw InvalidOptionException.
         'custom_url' => null,
 
         // Any additional inputs to add to the form. This is an array of name => value

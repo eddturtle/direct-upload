@@ -2,6 +2,7 @@
 
 namespace EddTurtle\DirectUpload\Tests;
 
+use EddTurtle\DirectUpload\InvalidOptionException;
 use EddTurtle\DirectUpload\Signature;
 
 class SignatureTest extends \PHPUnit_Framework_TestCase
@@ -65,6 +66,29 @@ class SignatureTest extends \PHPUnit_Framework_TestCase
         // Test default region param
         $url = (new Signature('key', 'secret', 'bucket'))->getFormUrl();
         $this->assertEquals("//s3.amazonaws.com/bucket", $url);
+    }
+
+    public function testBuildUrlWithCustomUrl()
+    {
+        $url = (new Signature('key', 'secret', 'bucket', 'us-east-1', [
+            'custom_url' => 'http://www.example.co.uk/'
+        ]))->getFormUrl();
+        $this->assertEquals("http://www.example.co.uk/bucket", $url);
+
+        // Test that trailing slash doesn't matter
+        $url = (new Signature('key', 'secret', 'bucket', 'us-east-1', [
+            'custom_url' => 'http://www.example.co.uk'
+        ]))->getFormUrl();
+        $this->assertEquals("http://www.example.co.uk/bucket", $url);
+
+        // Test Invalid Url Exception
+        try {
+            (new Signature('key', 'secret', 'testbucket', $this->testRegion, [
+                'custom_url' => 'not a url'
+            ]))->getFormUrl();
+        } catch (\Exception $e) {
+            $this->assertTrue($e instanceof InvalidOptionException);
+        }
     }
 
     public function testGetOptions()
