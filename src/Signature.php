@@ -56,6 +56,9 @@ class Signature
         // so that files will be encrypted with AES256 when at rest.
         'encryption' => false,
 
+        //
+        'custom_url' => null,
+
         // Any additional inputs to add to the form. This is an array of name => value
         // pairs e.g. ['Content-Disposition' => 'attachment']
         'additional_inputs' => []
@@ -138,6 +141,28 @@ class Signature
      * @return string the s3 bucket's url.
      */
     public function getFormUrl()
+    {
+        if (!is_null($this->options['custom_url'])) {
+            return $this->buildCustomUrl();
+        } else {
+            return $this->buildAmazonUrl();
+        }
+    }
+
+    private function buildCustomUrl()
+    {
+        $url = trim($this->options['custom_url']);
+
+        if (filter_var($url, FILTER_VALIDATE_URL) === false) {
+            throw new InvalidOptionException("The custom_url option you have specified is invalid");
+        }
+
+        $separator = (substr($url, -1) === "/" ? "" : "/");
+
+        return $url . $separator . urlencode($this->bucket);
+    }
+
+    private function buildAmazonUrl()
     {
         $region = (string)$this->region;
 
