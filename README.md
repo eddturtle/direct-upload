@@ -80,6 +80,7 @@ Options can be passed into the Signature class as a fifth parameter, below is a 
 | expires           | +6 hours    | Request expiration time, specified in relative time format or in seconds. min: 1 (+1 second), max: 604800 (+7 days) |
 | valid_prefix      |             | Server will check that the filename starts with this prefix and fail with a AccessDenied 403 if not. |
 | content_type      |             | Strictly only allow a single content type, blank will allow all. Will fail with a AccessDenied 403 is this condition is not met. |
+| encryption        | false       | Sets whether AWS server side encryption should be applied to the uploaded files, so that files will be encrypted with AES256 when at rest. |
 | additional_inputs |             | Any additional inputs to add to the form. This is an array of name => value pairs e.g. ['Content-Disposition' => 'attachment'] |
 
 For example:
@@ -87,6 +88,7 @@ For example:
     $upload = new Signature("", "", "", "", [
         'acl' => 'public-read',
         'max_file_size' => 10,
+        'encryption' => true,
         'additional_inputs' => [
             'Content-Disposition' => 'attachment'
         ]
