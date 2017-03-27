@@ -107,11 +107,11 @@ $upload = new Signature("", "", "", "", [
 
 | Method                | Description  |
 | --------------------- | ------------ |
-| getFormUrl()          | Gets the url to go into your form's action attribute (will work on http and https). |
-| getOptions()          | Gets all the options which are currently set, which if unchanged would be the default options. |
+| getFormUrl()          | Gets the submission url to go into your form's action attribute (will work on http and https). This is useful for getting the right region and url structure. |
+| getOptions()          | Gets all the options which are currently set. If no options have been changed, this will return the default set of options. |
 | setOptions()          | Change any options after the signature has been instantiated. |
-| getSignature()        | Get the AWS Signature (v4), won't be needed if you're using getFormInputs() or getFormInputsAsHtml(). |
-| getFormInputs()       | Returns an array of all the inputs you'll need to submit in your form. This has an option parameter if the input[type="key] is wanted. |
+| getSignature()        | Get the AWS Signature (v4), won't be needed if you're using getFormInputs() or getFormInputsAsHtml() - but useful if you are building your own form html and just need the signature. |
+| getFormInputs()       | Returns an array of all the inputs you'll need to submit in your form. This has an option parameter if the input[type="key"] is wanted (defaults to true). |
 | getFormInputsAsHtml() | Uses getFormInputs() to build the required html to go into your form. |
 
 ### Contributing
