@@ -6,7 +6,7 @@
 [![License](https://poser.pugx.org/eddturtle/direct-upload/license)](https://packagist.org/packages/eddturtle/direct-upload)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/eddturtle/direct-upload/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/eddturtle/direct-upload/badges/quality-score.png?b=master)
 
-This package is designed to build the necessary signature (v4), policy and form inputs when sending files directly to Amazon's S3 service. This is especially useful when uploading from cloud platforms and help to build '[twelve factor apps](http://12factor.net/backing-services)'.
+This package is designed to build the necessary AWS signature (v4), policy and form inputs for sending files directly to Amazon's S3 service. This is especially useful when uploading from cloud platforms and help to build '[twelve factor apps](http://12factor.net/backing-services)'.
 
 This project was sprouted from [this blog post](https://www.designedbyaturtle.co.uk/2015/direct-upload-to-s3-using-aws-signature-v4-php/) which might help explain how the code works and how to set it up. The blog post also has lots of useful comments, which might help you out if you're having problems.
 
@@ -20,7 +20,7 @@ This package can be installed using Composer by running:
     
 ### Usage
 
-Once we have the package installed we can make our uploader object, like so: (remember to add your s3 details)
+Once we have the package installed we can make our uploader object, like so: (remember to add your S3 details)
 
 ```php
 <?php
@@ -57,7 +57,7 @@ We have an [example project](https://github.com/eddturtle/direct-upload-s3-signa
 
 ### S3 CORS Configuration
 
-When uploading a file to S3 it's important that the bucket has a [CORS configuration](http://docs.aws.amazon.com/AmazonS3/latest/dev/cors.html) that's open to accepting files from elsewhere. Here's an example CORS setup:
+When uploading a file to S3 through the browser it's important that the bucket has a [CORS configuration](http://docs.aws.amazon.com/AmazonS3/latest/dev/cors.html) that's open to accepting files from elsewhere. Here's an example CORS setup:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
