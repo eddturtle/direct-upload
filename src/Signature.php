@@ -60,6 +60,9 @@ class Signature
         // a valid url (inc. http/https) otherwise will throw InvalidOptionException.
         'custom_url' => null,
 
+        // Set Amazon S3 Transfer Acceleration
+        'accelerate' => false,
+
         // Any additional inputs to add to the form. This is an array of name => value
         // pairs e.g. ['Content-Disposition' => 'attachment']
         'additional_inputs' => []
@@ -174,7 +177,10 @@ class Signature
             $middle = "";
         }
 
-        return "//" . self::SERVICE . $middle . ".amazonaws.com" . "/" . urlencode($this->bucket);
+        if($this->options['accelerate'])
+            return "//" . urlencode($this->bucket) . "." . self::SERVICE . "-accelerate.amazonaws.com";
+        else
+            return "//" . self::SERVICE . $middle . ".amazonaws.com" . "/" . urlencode($this->bucket);
     }
 
     /**

@@ -88,6 +88,7 @@ Options can be passed into the Signature class as a fifth parameter, below is a 
 | content_type      |             | Strictly only allow a single content type, blank will allow all. Will fail with a AccessDenied 403 is this condition is not met. |
 | encryption        | false       | Sets whether AWS server side encryption should be applied to the uploaded files, so that files will be encrypted with AES256 when at rest. |
 | custom_url        | null        | Allow S3 compatible solutions by specifying the domain it should POST to. Must be a valid url (inc. http/https) otherwise will throw InvalidOptionException. |
+| accelerate        | false       | Set Amazon S3 Transfer Acceleration |
 | additional_inputs |             | Any additional inputs to add to the form. This is an array of name => value pairs e.g. ['Content-Disposition' => 'attachment'] |
 
 For example:
