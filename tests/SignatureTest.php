@@ -2,6 +2,8 @@
 
 namespace EddTurtle\DirectUpload\Tests;
 
+use EddTurtle\DirectUpload\Acl;
+use EddTurtle\DirectUpload\InvalidAclException;
 use EddTurtle\DirectUpload\InvalidOptionException;
 use EddTurtle\DirectUpload\Signature;
 
@@ -173,6 +175,35 @@ class SignatureTest extends \PHPUnit_Framework_TestCase
             $object->getFormInputs(); // Forces the signature to be built
         } catch (\Exception $e) {
             $this->assertTrue($e instanceof \InvalidArgumentException);
+        }
+    }
+
+    public function testEncryptionOption()
+    {
+        $object = new Signature('k', 's', 'b', $this->testRegion, [
+            'encryption' => true
+        ]);
+        $this->assertArrayHasKey('X-amz-server-side-encryption', $object->getFormInputs());
+
+        $options = $object->getOptions();
+        $this->assertArrayHasKey('X-amz-server-side-encryption', $options['additional_inputs']);
+        $this->assertTrue($options['encryption']);
+    }
+
+    public function testAclOption()
+    {
+        $object = new Signature('k', 's', 'b', $this->testRegion, [
+            'acl' => 'private'
+        ]);
+        $object->setOptions(['acl' => 'public-read']);
+
+        $object->setOptions(['acl' => new Acl('public-read')]);
+
+        // Test Exception
+        try {
+            $object->setOptions(['acl' => 'invalid']);
+        } catch (InvalidAclException $e) {
+            $this->assertTrue($e instanceof InvalidAclException);
         }
     }
 

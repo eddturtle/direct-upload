@@ -207,6 +207,12 @@ class Signature
 
         // Return HTTP code must be a string
         $this->options['success_status'] = (string)$this->options['success_status'];
+
+        // Encryption option is just a helper to set this header, but we need to set it early on so it
+        // affects both the policy and the inputs generated.
+        if ($this->options['encryption']) {
+            $this->options['additional_inputs']['X-amz-server-side-encryption'] = 'AES256';
+        }
     }
 
     /**
@@ -246,10 +252,6 @@ class Signature
             'X-amz-date' => $this->getFullDateFormat(),
             'X-amz-signature' => $this->signature
         ];
-
-        if ($this->options['encryption']) {
-            $inputs['X-amz-server-side-encryption'] = 'AES256';
-        }
 
         $inputs = array_merge($inputs, $this->options['additional_inputs']);
 
