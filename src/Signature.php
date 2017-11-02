@@ -177,10 +177,11 @@ class Signature
             $middle = "";
         }
 
-        if($this->options['accelerate'])
+        if ($this->options['accelerate']) {
             return "//" . urlencode($this->bucket) . "." . self::SERVICE . "-accelerate.amazonaws.com";
-        else
+        } else {
             return "//" . self::SERVICE . $middle . ".amazonaws.com" . "/" . urlencode($this->bucket);
+        }
     }
 
     /**
