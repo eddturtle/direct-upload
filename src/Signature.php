@@ -110,7 +110,7 @@ class Signature
     public function __construct($key, $secret, $bucket, $region = "us-east-1", $options = [])
     {
         $this->setAwsCredentials($key, $secret);
-        $this->populateTime();
+        $this->setTime();
 
         $this->bucket = $bucket;
         $this->region = new Region($region);
@@ -362,19 +362,21 @@ class Signature
         $this->signature = $this->keyHash($this->base64Policy, $signingKey, false);
     }
 
+    public function setTime($time = null)
+    {
+        if (!is_null($time)) {
+            $this->time = $time;
+        } else if (is_null($this->time)) {
+            $this->time = time();
+        }
+    }
+
 
     // Helper functions
 
     private function keyHash($date, $key, $raw = true)
     {
         return hash_hmac('sha256', $date, $key, $raw);
-    }
-
-    private function populateTime()
-    {
-        if (is_null($this->time)) {
-            $this->time = time();
-        }
     }
 
     private function mbToBytes($megaByte)
