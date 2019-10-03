@@ -7,7 +7,7 @@ use EddTurtle\DirectUpload\InvalidAclException;
 use EddTurtle\DirectUpload\InvalidOptionException;
 use EddTurtle\DirectUpload\Signature;
 
-class SignatureTest extends \PHPUnit_Framework_TestCase
+class SignatureTest extends \PHPUnit\Framework\TestCase
 {
 
     // Bucket contains a '/' just to test that the name in the url is urlencoded.
@@ -21,27 +21,21 @@ class SignatureTest extends \PHPUnit_Framework_TestCase
         return $object;
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testMissingKeyOrSecret()
     {
+        $this->expectException(\InvalidArgumentException::class);
         new Signature('', '', '', $this->testRegion);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testUnchangedKey()
     {
+        $this->expectException(\InvalidArgumentException::class);
         new Signature('YOUR_S3_KEY', 'secret', 'bucket', $this->testRegion);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testUnchangedSecret()
     {
+        $this->expectException(\InvalidArgumentException::class);
         new Signature('key', 'YOUR_S3_SECRET', 'bucket', $this->testRegion);
     }
 
@@ -142,7 +136,7 @@ class SignatureTest extends \PHPUnit_Framework_TestCase
 
         // Test all values as string (and not objects which get cast later)
         foreach ($inputs as $input) {
-            $this->assertInternalType('string', $input);
+            $this->assertIsString($input);
         }
 
         return $object;
@@ -155,7 +149,7 @@ class SignatureTest extends \PHPUnit_Framework_TestCase
     public function testGetFormInputsAsHtml($object)
     {
         $html = $object->getFormInputsAsHtml();
-        $this->assertContains($object->getSignature(), $html);
+        $this->assertStringContainsString($object->getSignature(), $html);
         $this->assertStringStartsWith('<input type', $html);
     }
 
