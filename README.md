@@ -10,7 +10,7 @@ This package is designed to build the necessary AWS signature (v4), policy and f
 
 This project was sprouted from [this blog post](https://www.designedbyaturtle.co.uk/2015/direct-upload-to-s3-using-aws-signature-v4-php/) which might help explain how the code works and how to set it up. The blog post also has lots of useful comments, which might help you out if you're having problems.
 
-Supports PHP 5.6+ (inc. 7.0/7.1/7.2/7.3/7.4)
+Supports PHP 7.2+ (if you need php 5.5+ use v1.*)
 
 ### Install
 
