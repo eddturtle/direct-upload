@@ -2,6 +2,8 @@
 
 namespace EddTurtle\DirectUpload;
 
+use EddTurtle\DirectUpload\Exceptions\InvalidRegionException;
+
 /**
  * Class Region
  *
@@ -47,7 +49,7 @@ class Region
      */
     private $name;
 
-    public function __construct($region)
+    public function __construct(string $region)
     {
         $this->setName($region);
     }
@@ -65,20 +67,19 @@ class Region
      *
      * @throws InvalidRegionException
      */
-    public function setName($region)
+    public function setName(string $region): void
     {
         $region = strtolower($region);
-        if (in_array($region, $this->possibleOptions)) {
-            $this->name = $region;
-        } else {
+        if (!in_array($region, $this->possibleOptions)) {
             throw new InvalidRegionException;
         }
+        $this->name = $region;
     }
 
     /**
      * @return string the aws region.
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }

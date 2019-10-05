@@ -2,6 +2,8 @@
 
 namespace EddTurtle\DirectUpload;
 
+use EddTurtle\DirectUpload\Exceptions\InvalidAclException;
+
 /**
  * Class Acl
  *
@@ -30,7 +32,7 @@ class Acl
      */
     private $name;
 
-    public function __construct($acl)
+    public function __construct(string $acl)
     {
         $this->setName($acl);
     }
@@ -48,20 +50,19 @@ class Acl
      *
      * @throws InvalidAclException
      */
-    public function setName($acl)
+    public function setName(string $acl): void
     {
         $acl = strtolower($acl);
-        if (in_array($acl, $this->possibleOptions)) {
-            $this->name = $acl;
-        } else {
+        if (!in_array($acl, $this->possibleOptions)) {
             throw new InvalidAclException;
         }
+        $this->name = $acl;
     }
 
     /**
      * @return string the aws acl policy name.
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }

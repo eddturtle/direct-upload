@@ -3,11 +3,12 @@
 namespace EddTurtle\DirectUpload\Tests;
 
 use EddTurtle\DirectUpload\Acl;
-use EddTurtle\DirectUpload\InvalidAclException;
-use EddTurtle\DirectUpload\InvalidOptionException;
+use EddTurtle\DirectUpload\Exceptions\InvalidAclException;
+use EddTurtle\DirectUpload\Exceptions\InvalidOptionException;
 use EddTurtle\DirectUpload\Signature;
+use PHPUnit\Framework\TestCase;
 
-class SignatureTest extends \PHPUnit\Framework\TestCase
+class SignatureTest extends TestCase
 {
 
     // Bucket contains a '/' just to test that the name in the url is urlencoded.
@@ -85,19 +86,6 @@ class SignatureTest extends \PHPUnit\Framework\TestCase
         } catch (\Exception $e) {
             $this->assertTrue($e instanceof InvalidOptionException);
         }
-    }
-
-    public function testGetOptions()
-    {
-        $object = new Signature('key', 'secret', 'test', $this->testRegion);
-        $options = $object->getOptions();
-        $this->assertTrue(count($options) === 11);
-        $this->assertArrayHasKey('success_status', $options);
-        $this->assertArrayHasKey('acl', $options);
-        $this->assertArrayHasKey('default_filename', $options);
-        $this->assertArrayHasKey('max_file_size', $options);
-        $this->assertArrayHasKey('expires', $options);
-        $this->assertArrayHasKey('valid_prefix', $options);
     }
 
     public function testGetSignature()

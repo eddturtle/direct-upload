@@ -1,6 +1,6 @@
 <?php
 
-namespace EddTurtle\DirectUpload;
+namespace EddTurtle\DirectUpload\Exceptions;
 
 class InvalidOptionException extends \Exception
 {
