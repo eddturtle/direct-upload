@@ -3,11 +3,12 @@
 namespace EddTurtle\DirectUpload\Tests;
 
 use EddTurtle\DirectUpload\Acl;
-use EddTurtle\DirectUpload\InvalidAclException;
-use EddTurtle\DirectUpload\InvalidOptionException;
+use EddTurtle\DirectUpload\Exceptions\InvalidAclException;
+use EddTurtle\DirectUpload\Exceptions\InvalidOptionException;
 use EddTurtle\DirectUpload\Signature;
+use PHPUnit\Framework\TestCase;
 
-class SignatureTest extends \PHPUnit\Framework\TestCase
+class SignatureTest extends TestCase
 {
 
     // Bucket contains a '/' just to test that the name in the url is urlencoded.
@@ -41,6 +42,7 @@ class SignatureTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @depends testInit
+     *
      * @param Signature $object
      */
     public function testBuildUrl($object)
@@ -87,19 +89,6 @@ class SignatureTest extends \PHPUnit\Framework\TestCase
         }
     }
 
-    public function testGetOptions()
-    {
-        $object = new Signature('key', 'secret', 'test', $this->testRegion);
-        $options = $object->getOptions();
-        $this->assertTrue(count($options) === 11);
-        $this->assertArrayHasKey('success_status', $options);
-        $this->assertArrayHasKey('acl', $options);
-        $this->assertArrayHasKey('default_filename', $options);
-        $this->assertArrayHasKey('max_file_size', $options);
-        $this->assertArrayHasKey('expires', $options);
-        $this->assertArrayHasKey('valid_prefix', $options);
-    }
-
     public function testGetSignature()
     {
         $object = new Signature('key', 'secret', 'testbucket', $this->testRegion);
@@ -132,7 +121,8 @@ class SignatureTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(gmdate("Ymd\THis\Z"), $inputs['X-amz-date']);
         $this->assertEquals(Signature::ALGORITHM, $inputs['X-amz-algorithm']);
         $this->assertEquals('test/${filename}', $inputs['key']);
-        $this->assertEquals('key/' . date('Ymd') . '/' . $this->testRegion . '/s3/aws4_request', $inputs['X-amz-credential']);
+        $amlCred = 'key/' . date('Ymd') . '/' . $this->testRegion . '/s3/aws4_request';
+        $this->assertEquals($amlCred, $inputs['X-amz-credential']);
 
         // Test all values as string (and not objects which get cast later)
         foreach ($inputs as $input) {
@@ -144,6 +134,7 @@ class SignatureTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @depends testGetFormInputs
+     *
      * @param Signature $object
      */
     public function testGetFormInputsAsHtml($object)

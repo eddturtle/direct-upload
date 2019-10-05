@@ -3,8 +3,10 @@
 namespace EddTurtle\DirectUpload\Tests;
 
 use EddTurtle\DirectUpload\Acl;
+use EddTurtle\DirectUpload\Exceptions\InvalidAclException;
+use PHPUnit\Framework\TestCase;
 
-class AclTest extends \PHPUnit\Framework\TestCase
+class AclTest extends TestCase
 {
 
     public function testValid()
@@ -16,7 +18,7 @@ class AclTest extends \PHPUnit\Framework\TestCase
 
     public function testInvalid()
     {
-        $this->expectException(\EddTurtle\DirectUpload\InvalidAclException::class);
+        $this->expectException(InvalidAclException::class);
         new Acl('invalid acl type');
     }
 

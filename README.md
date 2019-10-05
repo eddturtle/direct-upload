@@ -4,13 +4,13 @@
 [![Latest Stable Version](https://poser.pugx.org/eddturtle/direct-upload/v/stable)](https://packagist.org/packages/eddturtle/direct-upload)
 [![Total Downloads](https://poser.pugx.org/eddturtle/direct-upload/downloads)](https://packagist.org/packages/eddturtle/direct-upload)
 [![License](https://poser.pugx.org/eddturtle/direct-upload/license)](https://packagist.org/packages/eddturtle/direct-upload)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/eddturtle/direct-upload/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/eddturtle/direct-upload/badges/quality-score.png?b=master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/eddturtle/direct-upload/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/eddturtle/direct-upload)
 
 This package is designed to build the necessary AWS signature (v4), policy and form inputs for sending files directly to Amazon's S3 service. This is especially useful when uploading from cloud platforms and help to build '[twelve factor apps](http://12factor.net/backing-services)'.
 
 This project was sprouted from [this blog post](https://www.designedbyaturtle.co.uk/2015/direct-upload-to-s3-using-aws-signature-v4-php/) which might help explain how the code works and how to set it up. The blog post also has lots of useful comments, which might help you out if you're having problems.
 
-Supports PHP 5.6+ (inc. 7.0/7.1/7.2/7.3/7.4)
+Supports PHP 7.2+ (if you need php 5.5+ use v1.*)
 
 ### Install
 
@@ -20,7 +20,9 @@ This package can be installed using Composer by running:
     
 ### Usage
 
-Once we have the package installed we can make our uploader object, like so: (remember to add your S3 details)
+Once we have the package installed we can make our uploader object like so: (remember to add your S3 details)
+
+Option 1: Specify AWS Credentials
 
 ```php
 <?php
@@ -30,12 +32,25 @@ use EddTurtle\DirectUpload\Signature;
 // Require Composer's autoloader
 require_once __DIR__ . "/vendor/autoload.php";
 
-$upload = new Signature(
+$uploader = new Signature(
     "YOUR_S3_KEY",
     "YOUR_S3_SECRET",
     "YOUR_S3_BUCKET",
     "eu-west-1"
 );
+```
+
+**OR** Option 2: Use Environment Variables (`AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`)
+
+```php
+<?php
+
+use EddTurtle\DirectUpload\SignatureAuto;
+
+// Require Composer's autoloader
+require_once __DIR__ . "/vendor/autoload.php";
+
+$uploader = new SignatureAuto("YOUR_S3_BUCKET", "eu-west-1");
 ```
     
 More info on finding your region @ http://amzn.to/1FtPG6r
@@ -43,14 +58,14 @@ More info on finding your region @ http://amzn.to/1FtPG6r
 Then, using the object we've just made, we can generate the form's url and all the needed hidden inputs.
 
 ```html
-<form action="<?php echo $upload->getFormUrl(); ?>" method="POST" enctype="multipart/form-data">
+<form action="<?php echo $uploader->getFormUrl(); ?>" method="POST" enctype="multipart/form-data">
 
-    <?php echo $upload->getFormInputsAsHtml(); ?>
+    <?php echo $uploader->getFormInputsAsHtml(); ?>
     <input type="file" name="file">
 
 </form>
 ```
-    
+
 ### Example
     
 We have an [example project](https://github.com/eddturtle/direct-upload-s3-signaturev4) setup, along with the JavaScript, to demonstrate how the whole process will work.
@@ -94,7 +109,7 @@ Options can be passed into the Signature class as a fifth parameter, below is a 
 For example:
 
 ```php
-$upload = new Signature("", "", "", "", [
+$uploader = new SignatureAuto("", "", [
     'acl' => 'public-read',
     'max_file_size' => 10,
     'encryption' => true,
@@ -117,7 +132,7 @@ $upload = new Signature("", "", "", "", [
 
 ### Contributing
     
-Contributions via pull requests are welcome. The project is built with the [PSR-2 coding standard](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md), if any code is submitted it should adhere to this and come with any applicable tests for code changed/added. Where possible also keep one pull request per feature.
+Contributions via pull requests are welcome. The project is built with [PSR 1+2 coding standards](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md), if any code is submitted it should adhere to this and come with any applicable tests for code changed/added. Where possible also keep one pull request per feature.
 
 Running the tests is as easy as running:
 
