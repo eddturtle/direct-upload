@@ -42,6 +42,7 @@ class SignatureTest extends TestCase
 
     /**
      * @depends testInit
+     *
      * @param Signature $object
      */
     public function testBuildUrl($object)
@@ -120,7 +121,8 @@ class SignatureTest extends TestCase
         $this->assertEquals(gmdate("Ymd\THis\Z"), $inputs['X-amz-date']);
         $this->assertEquals(Signature::ALGORITHM, $inputs['X-amz-algorithm']);
         $this->assertEquals('test/${filename}', $inputs['key']);
-        $this->assertEquals('key/' . date('Ymd') . '/' . $this->testRegion . '/s3/aws4_request', $inputs['X-amz-credential']);
+        $amlCred = 'key/' . date('Ymd') . '/' . $this->testRegion . '/s3/aws4_request';
+        $this->assertEquals($amlCred, $inputs['X-amz-credential']);
 
         // Test all values as string (and not objects which get cast later)
         foreach ($inputs as $input) {
@@ -132,6 +134,7 @@ class SignatureTest extends TestCase
 
     /**
      * @depends testGetFormInputs
+     *
      * @param Signature $object
      */
     public function testGetFormInputsAsHtml($object)

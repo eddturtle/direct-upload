@@ -302,7 +302,7 @@ class Signature
 
         // Iterates over the data (defined in the array above), hashing it each time.
         $initial = 'AWS4' . $this->secret;
-        $signingKey = array_reduce($signatureData, function($key, $data) {
+        $signingKey = array_reduce($signatureData, function ($key, $data) {
             return $this->keyHash($data, $key);
         }, $initial);
 
