@@ -4,7 +4,7 @@
 [![Latest Stable Version](https://poser.pugx.org/eddturtle/direct-upload/v/stable)](https://packagist.org/packages/eddturtle/direct-upload)
 [![Total Downloads](https://poser.pugx.org/eddturtle/direct-upload/downloads)](https://packagist.org/packages/eddturtle/direct-upload)
 [![License](https://poser.pugx.org/eddturtle/direct-upload/license)](https://packagist.org/packages/eddturtle/direct-upload)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/eddturtle/direct-upload/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/eddturtle/direct-upload/badges/quality-score.png?b=master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/eddturtle/direct-upload/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/eddturtle/direct-upload)
 
 This package is designed to build the necessary AWS signature (v4), policy and form inputs for sending files directly to Amazon's S3 service. This is especially useful when uploading from cloud platforms and help to build '[twelve factor apps](http://12factor.net/backing-services)'.
 
