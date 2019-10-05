@@ -13,6 +13,7 @@ namespace EddTurtle\DirectUpload;
 class Acl
 {
 
+    // https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl
     private $possibleOptions = [
         "authenticated-read",
         "aws-exec-read",
