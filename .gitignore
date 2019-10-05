@@ -61,3 +61,5 @@ composer.phar
 composer.lock
 
 index.php
+
+phpunit.xml
