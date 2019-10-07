@@ -8,7 +8,6 @@ use PHPUnit\Framework\TestCase;
 
 class RegionTest extends TestCase
 {
-
     public function testValid()
     {
         $object = new Region('eu-west-1');
@@ -34,5 +33,4 @@ class RegionTest extends TestCase
         // Note: assertEquals doesn't work as it appears equal anyway
         $this->assertTrue((string)$object === "eu-west-1");
     }
-
 }

@@ -8,7 +8,6 @@ use PHPUnit\Framework\TestCase;
 
 class AclTest extends TestCase
 {
-
     public function testValid()
     {
         $object = new Acl('private');

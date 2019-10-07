@@ -191,5 +191,4 @@ class SignatureTest extends TestCase
             $this->assertTrue($e instanceof InvalidAclException);
         }
     }
-
 }

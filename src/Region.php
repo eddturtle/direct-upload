@@ -14,7 +14,6 @@ use EddTurtle\DirectUpload\Exceptions\InvalidRegionException;
  */
 class Region
 {
-
     private $possibleOptions = [
         // US
         "us-east-1",
@@ -83,5 +82,4 @@ class Region
     {
         return $this->name;
     }
-
 }

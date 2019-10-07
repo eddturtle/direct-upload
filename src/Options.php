@@ -66,7 +66,7 @@ class Options
 
     ];
 
-    public function __construct($options = [])
+    public function __construct(array $options = [])
     {
         $this->setOptions($options);
     }
@@ -81,7 +81,7 @@ class Options
         return $this->options;
     }
 
-    public function get($name)
+    public function get(string $name)
     {
         if (!array_key_exists($name, $this->options)) {
             throw new InvalidOptionException("Invalid option given to get()");
@@ -118,5 +118,4 @@ class Options
         }
         $this->options[$name] = $value;
     }
-
 }
