@@ -7,7 +7,6 @@ use PHPUnit\Framework\TestCase;
 
 class OptionsTest extends TestCase
 {
-
     public function testGetOptions()
     {
         $options = (new Options())->getOptions();
@@ -19,5 +18,4 @@ class OptionsTest extends TestCase
         $this->assertArrayHasKey('expires', $options);
         $this->assertArrayHasKey('valid_prefix', $options);
     }
-
 }

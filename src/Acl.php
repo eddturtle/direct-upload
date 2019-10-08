@@ -14,7 +14,6 @@ use EddTurtle\DirectUpload\Exceptions\InvalidAclException;
  */
 class Acl
 {
-
     // https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl
     private $possibleOptions = [
         "authenticated-read",
@@ -66,5 +65,4 @@ class Acl
     {
         return $this->name;
     }
-
 }

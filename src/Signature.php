@@ -14,10 +14,9 @@ use EddTurtle\DirectUpload\Exceptions\InvalidOptionException;
  */
 class Signature
 {
-
-    CONST ALGORITHM = "AWS4-HMAC-SHA256";
-    CONST SERVICE = "s3";
-    CONST REQUEST_TYPE = "aws4_request";
+    const ALGORITHM = "AWS4-HMAC-SHA256";
+    const SERVICE = "s3";
+    const REQUEST_TYPE = "aws4_request";
 
     private $options;
 
@@ -59,7 +58,7 @@ class Signature
      * @param string $region  the s3 region this bucket is within. More info: http://amzn.to/1FtPG6r
      * @param array  $options any additional options, like acl and success status.
      */
-    public function __construct($key, $secret, $bucket, $region = "us-east-1", $options = [])
+    public function __construct(string $key, string $secret, string $bucket, string $region = "us-east-1", array $options = [])
     {
         $this->setAwsCredentials($key, $secret);
         $this->time = time();
@@ -76,7 +75,7 @@ class Signature
      * @param string $key    the AWS API Key to use.
      * @param string $secret the AWS API Secret to use.
      */
-    protected function setAwsCredentials($key, $secret): void
+    protected function setAwsCredentials(string $key, string $secret): void
     {
         // Key
         if (empty($key)) {
@@ -159,7 +158,7 @@ class Signature
      *
      * @return void
      */
-    public function setOptions($options): void
+    public function setOptions(array $options): void
     {
         $this->options->setOptions($options);
     }
@@ -328,7 +327,6 @@ class Signature
 
 
     // Dates
-
     private function getShortDateFormat(): string
     {
         return gmdate("Ymd", $this->time);
@@ -352,6 +350,4 @@ class Signature
 
         return gmdate('Y-m-d\TG:i:s\Z', $exp);
     }
-
-
 }
