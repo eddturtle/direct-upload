@@ -312,9 +312,9 @@ class Signature
 
     // Helper functions
 
-    private function keyHash($date, $key, $raw = true): string
+    private function keyHash($data, $key, $raw = true): string
     {
-        return hash_hmac('sha256', $date, $key, $raw);
+        return hash_hmac('sha256', $data, $key, $raw);
     }
 
     private function mbToBytes($megaByte): int
