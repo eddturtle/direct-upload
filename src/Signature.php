@@ -129,7 +129,7 @@ class Signature
 
         // Only the us-east-1 region is exempt from needing the region in the url.
         if ($region !== "us-east-1") {
-            $middle = "-" . $region;
+            $middle = "." . $region;
         } else {
             $middle = "";
         }
