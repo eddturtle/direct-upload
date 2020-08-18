@@ -20,6 +20,8 @@ class Region
         "us-east-2",
         "us-west-1",
         "us-west-2",
+        // Africa
+        "af-south-1",
         // Asia-Pacific
         "ap-east-1",
         "ap-south-1",
@@ -28,8 +30,9 @@ class Region
         "ap-northeast-3",
         "ap-southeast-1",
         "ap-southeast-2",
-        // China
+        // Canada
         "ca-central-1",
+        // China
         "cn-north-1",
         "cn-northwest-1",
         // EU
@@ -38,6 +41,7 @@ class Region
         "eu-west-2",
         "eu-west-3",
         "eu-north-1",
+        "eu-south-1",
         // Other
         "sa-east-1",
         "me-south-1",
