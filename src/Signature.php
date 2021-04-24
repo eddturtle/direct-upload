@@ -269,13 +269,29 @@ class Signature
         $this->base64Policy = base64_encode(json_encode($policy));
     }
 
+    /**
+     * Build the content-type part of the policy. It can change based on options given to it.
+     *
+     * @return array [0 => the type to restriction, eq or starts-with, 1 => the content-type header, 2 => the value]
+     */
     private function getPolicyContentTypeArray(): array
     {
+        // Prefix = 1st item of the array, eq is exact, starts-with is... starts with ;)
         $contentTypePrefix = (empty($this->options->get('content_type')) ? 'starts-with' : 'eq');
+
+        // Pass the content_type option (for exact) or content_type_starts_with for starts with matching
+        if (!empty($this->options->get('content_type'))) {
+            $contentTypeValue = $this->options->get('content_type');
+        } else if (!empty($this->options->get('content_type_starts_with'))) {
+            $contentTypeValue = $this->options->get('content_type_starts_with');
+        } else {
+            $contentTypeValue = '';
+        }
+
         return [
             $contentTypePrefix,
             '$Content-Type',
-            $this->options->get('content_type')
+            $contentTypeValue
         ];
     }
 

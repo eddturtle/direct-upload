@@ -49,6 +49,10 @@ class Options
         // with a AccessDenied 403 is this condition is not met.
         'content_type' => '',
 
+        // If the content_type option (above) is blank, then this option allows a range of
+        // content types, through starts-with #30.
+        'content_type_starts_with' => '',
+
         // Sets whether AWS server side encryption should be applied to the uploaded files,
         // so that files will be encrypted with AES256 when at rest.
         'encryption' => false,
