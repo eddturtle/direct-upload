@@ -101,6 +101,7 @@ Options can be passed into the Signature class as a fifth parameter, below is a 
 | expires           | +6 hours    | Request expiration time, specified in relative time format or in seconds. min: 1 (+1 second), max: 604800 (+7 days) |
 | valid_prefix      |             | Server will check that the filename starts with this prefix and fail with a AccessDenied 403 if not. |
 | content_type      |             | Strictly only allow a single content type, blank will allow all. Will fail with a AccessDenied 403 is this condition is not met. |
+| content_type_starts_with |      | If the content_type option (above) is blank, then this option allows a range of content types, through starts-with ([#30](/eddturtle/direct-upload/issues/30)) (added in v3.1). |
 | encryption        | false       | Sets whether AWS server side encryption should be applied to the uploaded files, so that files will be encrypted with AES256 when at rest. Should be a true or false bool. |
 | custom_url        | null        | Allow S3 compatible solutions by specifying the domain it should POST to. Must be a valid url (inc. http/https) otherwise will throw InvalidOptionException. |
 | accelerate        | false       | Set Amazon S3 Transfer Acceleration - more info @ [http://amzn.to/2xKblKe](http://amzn.to/2xKblKe). Should be a true or false bool. |
