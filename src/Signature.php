@@ -31,6 +31,11 @@ class Signature
     private $secret;
 
     /**
+     * @var string|null the AWS session token, only needed for temporary credentials
+     */
+    private $sessionToken = null;
+
+    /**
      * @var string
      */
     private $bucket;
@@ -52,21 +57,40 @@ class Signature
     /**
      * Signature constructor.
      *
-     * @param string $key     the AWS API Key to use.
-     * @param string $secret  the AWS API Secret to use.
-     * @param string $bucket  the bucket to upload the file into.
-     * @param string $region  the s3 region this bucket is within. More info: http://amzn.to/1FtPG6r
-     * @param array  $options any additional options, like acl and success status.
+     * @param string      $key          the AWS API Key to use.
+     * @param string      $secret       the AWS API Secret to use.
+     * @param string      $bucket       the bucket to upload the file into.
+     * @param string      $region       the s3 region this bucket is within. More info: http://amzn.to/1FtPG6r
+     * @param array       $options      any additional options, like acl and success status.
+     * @param string|null $sessionToken the AWS session token, if using temporary credentials.
      */
-    public function __construct(string $key, string $secret, string $bucket, string $region = "us-east-1", array $options = [])
+    public function __construct(string $key, string $secret, string $bucket, string $region = "us-east-1", array $options = [], ?string $sessionToken = null)
     {
         $this->setAwsCredentials($key, $secret);
+        $this->sessionToken = $sessionToken ?: null;
         $this->time = time();
 
         $this->bucket = $bucket;
         $this->region = new Region($region);
 
         $this->options = new Options($options);
+    }
+
+    /**
+     * Build a Signature using the credentials of a named profile from the shared AWS credentials
+     * file (~/.aws/credentials) instead of passing the key and secret directly.
+     *
+     * @param string $profile the name of the profile to use, e.g. "default".
+     * @param string $bucket  the bucket to upload the file into.
+     * @param string $region  the s3 region this bucket is within. More info: http://amzn.to/1FtPG6r
+     * @param array  $options any additional options, like acl and success status.
+     *
+     * @return Signature
+     */
+    public static function fromProfile(string $profile, string $bucket, string $region = "us-east-1", array $options = []): Signature
+    {
+        $credentials = Profile::getCredentials($profile);
+        return new Signature($credentials['key'], $credentials['secret'], $bucket, $region, $options, $credentials['token']);
     }
 
     /**
@@ -201,6 +225,10 @@ class Signature
             'X-amz-signature' => $this->signature
         ];
 
+        if (!is_null($this->sessionToken)) {
+            $inputs['X-amz-security-token'] = $this->sessionToken;
+        }
+
         $inputs = array_merge($inputs, $this->options->get('additional_inputs'));
 
         if ($addKey) {
@@ -265,6 +293,9 @@ class Signature
                 ['x-amz-date' => $this->getFullDateFormat()]
             ]
         ];
+        if (!is_null($this->sessionToken)) {
+            $policy['conditions'][] = ['x-amz-security-token' => $this->sessionToken];
+        }
         $policy = $this->addAdditionalInputs($policy);
         $this->base64Policy = base64_encode(json_encode($policy));
     }
