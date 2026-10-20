@@ -8,9 +8,9 @@
 
 This package is designed to build the necessary AWS signature (v4), policy and form inputs for sending files directly to Amazon's S3 service. This is especially useful when uploading from cloud platforms and help to build '[twelve factor apps](http://12factor.net/backing-services)'.
 
-This project was sprouted from [this blog post](https://www.designedbyaturtle.co.uk/2015/direct-upload-to-s3-using-aws-signature-v4-php/) which might help explain how the code works and how to set it up. The blog post also has lots of useful comments, which might help you out if you're having problems.
+This project was sprouted from [this blog post](https://designedbyaturtle.com/direct-upload-to-s3-using-aws-signature-v4-php/) which might help explain how the code works and how to set it up. The blog post also has lots of useful comments, which might help you out if you're having problems.
 
-Supports PHP 7.2+ (if you need php 5.5+ use v1.*)
+Supports PHP 8.0+ (if you need php5.5+ use v1, if you need php7 use v3)
 
 ### Install
 
@@ -52,6 +52,26 @@ require_once __DIR__ . "/vendor/autoload.php";
 
 $uploader = new SignatureAuto("YOUR_S3_BUCKET", "eu-west-1");
 ```
+
+**OR** Option 3: Use a Profile from your AWS Credentials File (`~/.aws/credentials`)
+
+```php
+<?php
+
+use EddTurtle\DirectUpload\Signature;
+use EddTurtle\DirectUpload\SignatureAuto;
+
+// Require Composer's autoloader
+require_once __DIR__ . "/vendor/autoload.php";
+
+// Specify the profile directly...
+$uploader = Signature::fromProfile("YOUR_PROFILE", "YOUR_S3_BUCKET", "eu-west-1");
+
+// ...or pass it as the fourth argument of SignatureAuto, which will override any environment variables
+$uploader = new SignatureAuto("YOUR_S3_BUCKET", "eu-west-1", [], "YOUR_PROFILE");
+```
+
+`SignatureAuto` will also use the profile named in the `AWS_PROFILE` environment variable, but only when `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` aren't set. If the profile contains an `aws_session_token` (temporary credentials, e.g. from assuming a role), it is included in the policy and form inputs as `x-amz-security-token`. The same applies to the `AWS_SESSION_TOKEN` environment variable when using `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`. Note that profiles are only read from `~/.aws/credentials`, so SSO profiles need their temporary credentials written there first (e.g. with `aws configure export-credentials`).
     
 More info on finding your region @ http://amzn.to/1FtPG6r
 
